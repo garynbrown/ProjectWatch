@@ -1,0 +1,98 @@
+﻿<core:UserControlViewBase
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjectWatch.Views"
+             xmlns:core="clr-namespace:Core.Common.UI.Core;assembly=Core.Common.UI"
+             xmlns:converters="clr-namespace:ProjectWatch.Converters"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" x:Class="ProjectWatch.Views.DashboardView"
+             mc:Ignorable="d" 
+    Background="LightGray"
+             Height="150" Width="200" >
+    <core:UserControlViewBase.Resources>
+        <converters:TimespanToMinutes x:Key="ConvertToWorkHours"/>
+        <converters:CurrentTimeDisplay x:Key="ConvertCurrentTime"/>
+    </core:UserControlViewBase.Resources>
+    <core:UserControlViewBase.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+    </core:UserControlViewBase.Triggers>
+
+    <Grid Margin="0,0,0,0">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CollapsedStates">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition GeneratedDuration="0:0:0.5" To="Normal">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CubicEase EasingMode="EaseInOut"/>
+                        </VisualTransition.GeneratedEasingFunction>
+                    </VisualTransition>
+                    <VisualTransition GeneratedDuration="0:0:0.5" To="Collapsed">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CubicEase EasingMode="EaseInOut"/>
+                        </VisualTransition.GeneratedEasingFunction>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Normal"/>
+                <VisualState x:Name="Collapsed">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="___ProjectWatch_component_Resources_Icons_Collapse_png">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="-180"/>
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="PopUpGrid">
+                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <!--<Button x:Name="StartButton" Background="LimeGreen" Command="{Binding StartCommand}" VerticalAlignment="Top" Margin="12,10,0,0"  Content="{Binding StartButtonContent}" HorizontalAlignment="Left" Width="75" />
+        <Button x:Name="StopButton" Background="Firebrick"  Command="{Binding StopCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,38,0,0"  Content="Stop" Width="75" />
+        <Button x:Name="Break" Background="Gold"  Command="{Binding PauseCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,65,0,0"  Content="Break" Width="75" />-->
+        <Label x:Name="CurrentTimeLable" Content="Current Time" HorizontalAlignment="Left" Margin="10,84.666,0,0" VerticalAlignment="Top" Width="80" Height="23" d:LayoutOverrides="HorizontalAlignment"/>
+        <TextBlock x:Name="TimeOnProjectLable" Text="{Binding TypeOfTime}" HorizontalAlignment="Left" Margin="9,45.018,0,0" Width="88" d:LayoutOverrides="HorizontalAlignment" Height="23" VerticalAlignment="Top"/>
+        <TextBlock x:Name="SystemTimeTextBlock" HorizontalAlignment="Right" Margin="0,0,10,31.133" TextWrapping="Wrap" Text="{Binding CurrentTime, Converter={StaticResource ConvertCurrentTime}}" Height="34.201" Width="88" FontSize="20" VerticalAlignment="Bottom" d:LayoutOverrides="Height, TopMargin, BottomMargin"/>
+        <TextBlock x:Name="TimeOnProject" HorizontalAlignment="Right" Margin="0,40.425,10,0" TextWrapping="Wrap" Text="{Binding HoursWorked}" TextAlignment="Center" Width="88" FontSize="22" VerticalAlignment="Top" Height="33.705"/>
+        <Button x:Name="PlayButton" Content="Button" Margin="12,10,158,0" Style="{DynamicResource TimerPlayStyle}" Command="{Binding StartCommand}" Height="30.018" Width="30.018" VerticalAlignment="top" Click="PlayButton_Click" />
+        <Button x:Name="PauseButton" Content="Button" Margin="47,10,0,0" Style="{DynamicResource TimerPauseStyle}"  Command="{Binding PauseCommand}"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="30.018" Click="PauseButton_Click"/>
+        <Button x:Name="StopButton" Content="Button" Margin="82.018,10,85.317,0" Style="{DynamicResource TimerStopStyle}"  Command="{Binding StopCommand}"  VerticalAlignment="Top" Click="StopButton_Click"/>
+        <Grid x:Name="PopUpGrid" Background="DarkGray" Height="104.982" VerticalAlignment="Bottom
+              
+              ">
+            <!--<Button x:Name="StartButton" Background="LimeGreen" Command="{Binding StartCommand}" VerticalAlignment="Top" Margin="12,10,0,0"  Content="{Binding StartButtonContent}" HorizontalAlignment="Left" Width="75" />
+        <Button x:Name="StopButton" Background="Firebrick"  Command="{Binding StopCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,38,0,0"  Content="Stop" Width="75" />
+        <Button x:Name="Break" Background="Gold"  Command="{Binding PauseCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,65,0,0"  Content="Break" Width="75" />-->
+            <ComboBox x:Name="ProjectComboBox" ItemsSource="{Binding Projects}" HorizontalAlignment="Left" Margin="31.3,28.62,0,0" VerticalAlignment="Top" Width="137" d:LayoutOverrides="VerticalAlignment"/>
+            <ComboBox x:Name="PhaseCombox" HorizontalAlignment="Left" Margin="31.3,76.54,0,0" VerticalAlignment="Top" Width="137"/>
+            <TextBlock x:Name="ProjectTextBlock" Margin="84.07,7.66,79.213,0" TextWrapping="Wrap" Text="Project" VerticalAlignment="Top" d:LayoutOverrides="Width"/>
+            <TextBlock x:Name="PhaseTextBlock" Margin="87.3,55.58,81.713,0" TextWrapping="Wrap" Text="Phase" VerticalAlignment="Top" RenderTransformOrigin="0.677,-3.473" d:LayoutOverrides="Width"/>
+        </Grid>
+        <Grid Height="31.133" VerticalAlignment="Bottom">
+            <Image x:Name="___ProjectWatch_component_Resources_Icons_Collapse_png" HorizontalAlignment="Right" Margin="0,7.133,0,0" Source="/ProjectWatch;component/Resources/Icons/Collapse.png" Stretch="Fill" Width="24" RenderTransformOrigin="0.5,0.5">
+                <i:Interaction.Triggers>
+                    <ei:DataTrigger Binding="{Binding IsCollapsed, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DashboardView}}}" Value="False">
+                        <ei:GoToStateAction StateName="Normal"/>
+                    </ei:DataTrigger>
+                    <ei:DataTrigger Binding="{Binding IsCollapsed, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DashboardView}}}" Value="True">
+                        <ei:GoToStateAction StateName="Collapsed"/>
+                    </ei:DataTrigger>
+                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                        <ei:CallMethodAction TargetObject="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DashboardView}}}" MethodName="ToggleCollapsed"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Button x:Name="PropertyButton"  HorizontalAlignment="Left" Margin="0,7.133,0,0" Command="{Binding ShowPropertiesCommand}" Style="{DynamicResource PropertyButton}" Width="25.8" d:LayoutOverrides="Height"/>
+        </Grid>
+
+        <!--<TextBlock x:Name="TimeOnProject" HorizontalAlignment="Left" Margin="102,85,0,0" TextWrapping="Wrap" Text="{Binding HoursWorked, Converter={StaticResource ConvertToWorkHours}}" VerticalAlignment="Top" Height="25" Width="88"/>-->
+    </Grid>
+</core:UserControlViewBase>
+
