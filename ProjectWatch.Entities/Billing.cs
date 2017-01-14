@@ -188,6 +188,8 @@ namespace ProjectWatch.Entities
 			}
 		}
 
+		public string PathName  => "Billing";
+
 		private string _note;
 
 		#endregion

@@ -198,5 +198,10 @@ namespace ProjectWatch.Entities
 			get {return CustomerId; }
 			set { CustomerId = value; }
 		}
+
+		public string PathName
+		{
+			get { return "Customer";}
+		}
 	}
 }

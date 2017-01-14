@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Core.Common.Contracts;
 using Core.Common.Core;
 
 namespace ProjectWatch.Entities
 {
 //	OnPropertyChanged(() => _billingId);
 	[DataContract]
-	public class Phase : ClientEntityBase
+	public class Phase : ClientEntityBase, IIdentifiableEntity
 	{
 		#region Factory Method
 
@@ -206,5 +207,12 @@ namespace ProjectWatch.Entities
 
 		#endregion
 
+		public int EntityId
+		{
+			get { return PhaseId; }
+			set { PhaseId = value; }
+		}
+
+		public string PathName => "Phase";
 	}
 }

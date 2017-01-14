@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProjectWatch.Views"
-             xmlns:core="clr-namespace:Core.Common.UI.Core;assembly=Core.Common.UI"
+             xmlns:core="clr-namespace:Core.Common.UI;assembly=Core.Common"
              xmlns:converters="clr-namespace:ProjectWatch.Converters"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" x:Class="ProjectWatch.Views.DashboardView"
              mc:Ignorable="d" 

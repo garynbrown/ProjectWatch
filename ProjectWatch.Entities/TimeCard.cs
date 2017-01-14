@@ -7,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Core.Common.Contracts;
 using Core.Common.Core;
 using FluentValidation;
 
 namespace ProjectWatch.Entities
 {
 	[DataContract]
-	public class TimeCard : ClientEntityBase
+	public class TimeCard : ClientEntityBase, IIdentifiableEntity
 	{
 		#region Factory Method
 
@@ -197,5 +198,13 @@ namespace ProjectWatch.Entities
 		{
 			return new TimecardValidator();
 		}
+
+		public int EntityId
+		{
+			get { return TimeId; }
+			set { TimeId = value; }
+		}
+
+		public string PathName => "TimeCard";
 	}
 }

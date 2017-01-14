@@ -73,5 +73,7 @@ namespace ProjectWatch.Entities
 			get { return CompanyId; }
 			set { CompanyId = value; }
 		}
-    }
+
+	    public string PathName => "Company";
+	}
 }

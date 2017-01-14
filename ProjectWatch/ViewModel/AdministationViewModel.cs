@@ -5,7 +5,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Common.UI.Core;
+using Core.Common.UI;
 
 namespace ProjectWatch.ViewModel
 {

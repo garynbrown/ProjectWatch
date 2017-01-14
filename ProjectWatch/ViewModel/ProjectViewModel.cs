@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Common.UI.Core;
+using Core.Common.UI;
 using GalaSoft.MvvmLight.Command;
 using ProjectWatch.Entities;
 using System.Collections;
@@ -16,7 +16,7 @@ namespace ProjectWatch.ViewModel
 	public class ProjectViewModel : ViewModelCommon
 	{
 		// Fields...
-		private string _currentCompanyName;
+		private string _currentCompanyName = String.Empty;
 private Project _currentProject;
 		private List<Project> _projects = new List<Project>();
 		private List<Phase> _phases;

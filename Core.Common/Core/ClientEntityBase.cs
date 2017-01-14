@@ -21,7 +21,7 @@ namespace Core.Common.Core
 {
 	// this is taken from RentalCar -> Core.Common.Core.ObjectBase
 	// this is used as the base object for Model / entity/ object model classes
-	public abstract class ClientEntityBase : ObservableObject , IExtensibleDataObject, IDataErrorInfo,IDirtyCapable
+	public abstract class ClientEntityBase : ObservableObject , IExtensibleDataObject, IDataErrorInfo,IDirtyCapable,IIdentifiableEntity
 	{
 		public ClientEntityBase()
 		{
@@ -251,5 +251,14 @@ namespace Core.Common.Core
 
 		#endregion
 
+
+
+		public int EntityId
+		{
+			get { return -1; }
+			set{int i = value;}
+		}
+
+		public string PathName => String.Empty;
 	}
 }

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Core.Common.Core;
 using Newtonsoft.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ProjectWatch.Data.DataRepositories;
+using ProjectWatch.Data.DataSets;
+using ProjectWatch.Entities;
 using ProjectWatch.Support;
 
 namespace PWTest
@@ -68,6 +72,31 @@ namespace PWTest
 			ps.LastProject = 99;
 			PreferenceManager.LoadConfiguration(ref ps);
 			Assert.AreEqual(psLastProjectTest, ps.LastProject);
+		}
+
+		[TestMethod]
+		public void AddProjectTest()
+		{
+
+			ProjectSet PS = new ProjectSet() {PathName="TestProject"};
+			Project p1 = new Project() {ProjectId = 1,Name="Project1"};
+			Project p2 = new Project() { ProjectId = 2, Name = "Project2" };
+			PS.EntitySet = new List<Project>();
+			List<Project> projects = PS.EntitySet as List<Project>;
+//			projects.Add(p1);
+			projects.Add(p2);
+			ProjectRepository PR = new ProjectRepository(PS);
+			bool testSave = PR.Add(p1);
+			Assert.IsTrue(testSave && (PR.Get().Count() ==2));
+		}
+
+		[TestMethod]
+		public void LoadProjectTest()
+		{
+			ProjectSet PS = new ProjectSet() { PathName = "TestProject" };
+			ProjectRepository PR = new ProjectRepository(PS);
+			var DS = PR.Get();
+
 		}
 	}
 }

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectWatch.Views"
-        xmlns:core="clr-namespace:Core.Common.UI.Core;assembly=Core.Common.UI"
+        xmlns:core="clr-namespace:Core.Common.UI;assembly=Core.Common"
         xmlns:ViewModel="clr-namespace:ProjectWatch.ViewModel" x:Class="ProjectWatch.Views.ProjectView"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=ViewModel:ProjectViewModel, IsDesignTimeCreatable=True }"

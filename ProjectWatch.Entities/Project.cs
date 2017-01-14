@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Core.Common.Contracts;
 using Core.Common.Core;
 
 
 namespace ProjectWatch.Entities
 {
 	[DataContract]
-	public class Project : ClientEntityBase
+	public class Project : ClientEntityBase, IIdentifiableEntity
 	{
 		#region Factory Method
 
@@ -154,5 +155,13 @@ namespace ProjectWatch.Entities
 		{
 			return _name;
 		}
+
+		public int EntityId
+		{
+			get { return ProjectId; }
+			set { ProjectId = value; }
+		}
+
+		public string PathName => "Project";
 	}
 }

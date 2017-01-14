@@ -199,6 +199,8 @@ namespace ProjectWatch.Entities
 			get { return ContactId; }
 			set { ContactId = value; }
 		}
+
+		public string PathName  => "Contact";
 	}
 }
 
