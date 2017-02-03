@@ -194,13 +194,12 @@ namespace ProjectWatch.Entities
 
 		#endregion
 
-		public int EntityId
+		public override int EntityId
 		{
 			get { return ContactId; }
 			set { ContactId = value; }
 		}
 
-		public string PathName  => "Contact";
 	}
 }
 

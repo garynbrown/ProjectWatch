@@ -24,122 +24,70 @@ namespace ProjectWatch.Entities
 		/// <param name="time_ID">Initial value of the Time_ID property.</param>
 		public static TimeCard CreateTimeCard(int time_ID)
 		{
-			return new TimeCard() { _timeId = time_ID };
+			return new TimeCard() { TimeId = time_ID };
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TimeCard"/> class.
-		/// </summary>
-		/// <param name="HoursOnBreak"></param>
-		/// <param name="Note"></param>
-		/// <param name="HoursOnTask"></param>
-		/// <param name="PhaseId"></param>
-		/// <param name="ProjectId"></param>
-		/// <param name="EndTime"></param>
-		/// <param name="TimeId"></param>
-		/// <param name="StartTime"></param>
-		public TimeCard(double HoursOnBreak, string Note, double HoursOnTask, int PhaseId, int ProjectId, DateTime EndTime, int TimeId, DateTime StartTime)
+		public TimeCard(DateTime date)
 		{
-			_hoursOnBreak = HoursOnBreak;
-			_note = Note;
-			_hoursOnTask = HoursOnTask;
-			_phaseId = PhaseId;
-			_projectId = ProjectId;
-			_endTime = EndTime;
-			_timeId = TimeId;
-			_startTime = StartTime;
+			TimeId = MakeIdFromDate(date);
 		}
+
+		///// <summary>
+		///// Initializes a new instance of the <see cref="TimeCard"/> class.
+		///// </summary>
+		///// <param name="HoursOnBreak"></param>
+		///// <param name="Note"></param>
+		///// <param name="HoursOnTask"></param>
+		///// <param name="PhaseId"></param>
+		///// <param name="ProjectId"></param>
+		///// <param name="EndTime"></param>
+		///// <param name="TimeId"></param>
+		///// <param name="StartTime"></param>
+		//public TimeCard(double hoursOnBreak, string note, double hoursOnTask, int phaseId, int projectId, DateTime endTime, int timeId, DateTime startTime)
+		//{
+
+		//	ActiveBreakTimeBlock.HoursOnBreak = hoursOnBreak;
+		//	ActiveTaskTimeBlock.Note = note;
+		//	ActiveTaskTimeBlock.HoursOnTask = hoursOnTask;
+		//	ActiveTaskTimeBlock.PhaseId = phaseId;
+		//	ActiveTaskTimeBlock.ProjectId = projectId;
+		//	ActiveTaskTimeBlock.EndTime = endTime;
+		//	_timeId = timeId;
+		//	ActiveTaskTimeBlock.StartTime = startTime;
+		//}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TimeCard"/> class.
 		/// </summary>
 		public TimeCard()
 		{
-			_hoursOnBreak = 0d;
-			_note = String.Empty;
-			_hoursOnTask = 0d;
-			_phaseId = 0;
-			_projectId = 0;
-			_endTime = DateTime.MinValue;
-			_timeId = 0;
-			_startTime = DateTime.MinValue;
+			TimeId = 0;
 		}
 		#endregion
 
 		#region Primitive Properties
-		private double _hoursOnBreak;
-		private string _note;
-		private double _hoursOnTask;
-		private int _phaseId;
-		private int _projectId;
-		private DateTime _endTime;
-		private int _timeId;
-		private DateTime _startTime;
+
+		private TimeBlock _activeTaskTimeBlock;
+		private TimeBlock _activeBreakTimeBlock;
 		private List<TimeBlock> workBlocks = new List<TimeBlock>();
 		private List<TimeBlock> breakBlocks = new List<TimeBlock>();
+		private int _timeId;
 
-		[DataMember]
-		public int ProjectId
-		{
-			get { return _projectId; }
-			set
-			{
-				_projectId = value;
-			}
-		}
-		
+
 		[DataMember]
 		public int TimeId
 		{
-			get { return _timeId; }
-			set
-			{
-				if (_timeId != value)
-				{
-					_timeId = value;
-					RaisePropertyChanged(() => TimeId);
-				}
-			}
+			get { return  _timeId; }
+			private set { _timeId = value; }
 		}
 
-		[DataMember]
-		public DateTime EndTime
-		{
-			get { return _endTime; }
-			set
-			{
-				_endTime = value;
-			}
-		}
-
-		[DataMember]
-		public int PhaseId
-		{
-			get { return _phaseId; }
-			set
-			{
-				_phaseId = value;
-			}
-		}
-		
-
-		[DataMember]
-		public DateTime StartTime
-		{
-			get { return _startTime; }
-			set
-			{
-				_startTime = value;
-				RaisePropertyChanged(() => StartTime);
-			}
-		}
 
 		[DataMember]
 		public double HoursOnTask
 		{
-			get { return _hoursOnTask; }
+			get { return ActiveTaskTimeBlock.HoursOnTask; }
 			set
 			{
-				_hoursOnTask = value;
+				ActiveTaskTimeBlock.HoursOnTask = value;
 				RaisePropertyChanged(() => HoursOnTask);
 			}
 		}
@@ -148,10 +96,10 @@ namespace ProjectWatch.Entities
 		[DataMember]
 		public double HoursOnBreak
 		{
-			get { return _hoursOnBreak; }
+			get { return ActiveBreakTimeBlock.HoursOnBreak; }
 			set
 			{
-				_hoursOnBreak = value;
+				ActiveBreakTimeBlock.HoursOnBreak = value;
 				RaisePropertyChanged(() => HoursOnBreak);
 
 			}
@@ -159,15 +107,15 @@ namespace ProjectWatch.Entities
 
 
 
-		[DataMember]
-		public string Note
-		{
-			get { return _note; }
-			set
-			{
-				_note = value;
-			}
-		}
+		//[DataMember]
+		//public string Note
+		//{
+		//	get { return _note; }
+		//	set
+		//	{
+		//		_note = value;
+		//	}
+		//}
 
 		public void AddWorkBlock(DateTime startTime, DateTime stopTime)
 		{
@@ -181,30 +129,50 @@ namespace ProjectWatch.Entities
 			breakBlocks.Add(breakBlock);
 		}
 		#endregion
-		public class TimecardValidator : AbstractValidator<TimeCard>
+		#region Contract_Implementations
+
+		public override int EntityId
 		{
-			
-			public TimecardValidator()
-			{
-				RuleFor(obj => obj.StartTime).NotEmpty();
-				RuleFor(obj => obj.EndTime).NotEmpty();
-				RuleFor(obj => obj.StartTime.Day).GreaterThan(DateTime.Now.Day - 2);	// if today is day 10, and start day was day 9 then 9 > (10 - 2)
-				RuleFor(obj => obj.EndTime.Day ).GreaterThan(DateTime.Now.Day - 2);		// so stant and end can only be yesterday or today
-				RuleFor(obj => (obj.EndTime - obj.StartTime).Seconds).GreaterThan(0);	// StartTime must be before Endtime
-			}
+			get { return TimeId; }
+			set { }
+		}
+
+		public TimeBlock ActiveTaskTimeBlock
+		{
+			get { return _activeTaskTimeBlock; }
+			set { _activeTaskTimeBlock = value; }
+		}
+
+		public TimeBlock ActiveBreakTimeBlock
+		{
+			get { return _activeBreakTimeBlock; }
+			set { _activeBreakTimeBlock = value; }
 		}
 
 		protected override IValidator GetValidator()
 		{
 			return new TimecardValidator();
 		}
-
-		public int EntityId
+		public class TimecardValidator : AbstractValidator<TimeCard>
 		{
-			get { return TimeId; }
-			set { TimeId = value; }
+			
+			public TimecardValidator()
+			{
+				//RuleFor(obj => obj.StartTime).NotEmpty();
+				//RuleFor(obj => obj.EndTime).NotEmpty();
+				//RuleFor(obj => obj.StartTime.Day).GreaterThan(DateTime.Now.Day - 2);	// if today is day 10, and start day was day 9 then 9 > (10 - 2)
+				//RuleFor(obj => obj.EndTime.Day ).GreaterThan(DateTime.Now.Day - 2);		// so stant and end can only be yesterday or today
+				//RuleFor(obj => (obj.EndTime - obj.StartTime).Seconds).GreaterThan(0);	// StartTime must be before Endtime
+			}
 		}
+		#endregion
+		#region Methods
+		int MakeIdFromDate(DateTime date)
+		{
+			return date.Year * 10000 + date.Month * 100 + date.Day;
 
-		public string PathName => "TimeCard";
+		}
+		#endregion
+
 	}
 }

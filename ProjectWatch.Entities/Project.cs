@@ -156,12 +156,11 @@ namespace ProjectWatch.Entities
 			return _name;
 		}
 
-		public int EntityId
+		public override int EntityId
 		{
 			get { return ProjectId; }
 			set { ProjectId = value; }
 		}
 
-		public string PathName => "Project";
 	}
 }

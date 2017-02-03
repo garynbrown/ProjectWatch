@@ -11,6 +11,16 @@ namespace ProjectWatch.Entities
 {
 	public class Company : ClientEntityBase, IIdentifiableEntity
     {
+		public static Company CreateCompany(global::System.Int32 companyId)
+		{
+			Company company = new Company();
+			company._companyId = companyId;
+			return company;
+		}
+		public Company()
+	    {
+		    
+	    }
 
 		public int CompanyId
 		{
@@ -68,7 +78,7 @@ namespace ProjectWatch.Entities
             return retClnt;
         }
 
-		public int EntityId
+		public override int EntityId
 		{
 			get { return CompanyId; }
 			set { CompanyId = value; }

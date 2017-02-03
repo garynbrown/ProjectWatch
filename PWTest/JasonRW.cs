@@ -78,7 +78,7 @@ namespace PWTest
 		public void AddProjectTest()
 		{
 
-			ProjectSet PS = new ProjectSet() {PathName="TestProject"};
+			ProjectSet PS = new ProjectSet() ;
 			Project p1 = new Project() {ProjectId = 1,Name="Project1"};
 			Project p2 = new Project() { ProjectId = 2, Name = "Project2" };
 			PS.EntitySet = new List<Project>();
@@ -86,17 +86,29 @@ namespace PWTest
 //			projects.Add(p1);
 			projects.Add(p2);
 			ProjectRepository PR = new ProjectRepository(PS);
-			bool testSave = PR.Add(p1);
-			Assert.IsTrue(testSave && (PR.Get().Count() ==2));
+			Project testSave = PR.AddAsync(p1).Result;
+			Assert.IsTrue(PR.GetAsync().Result.EntitySet.Count() ==2);
 		}
 
 		[TestMethod]
-		public void LoadProjectTest()
+		public async void LoadProjectTest()
 		{
-			ProjectSet PS = new ProjectSet() { PathName = "TestProject" };
+			ProjectSet PS = new ProjectSet() ;
 			ProjectRepository PR = new ProjectRepository(PS);
-			var DS = PR.Get();
+			var DS = await PR.GetAsync();
+			DS = await PR.GetAsync();
+			Assert.AreEqual(PS.PathName,DS.PathName);
+		}
 
+		[TestMethod]
+		public  void AddTimeCard()
+		{
+			TimeCard tc = new TimeCard();
+			TimeCardSet tcs = new TimeCardSet();
+			tcs.EntitySet = new List<TimeCard>();
+			List<TimeCard> TimeCards = tcs.EntitySet as List<TimeCard>;
+			TimeCardRepository tcr = new TimeCardRepository(tcs);
+			var DS = tcr.AddAsync(tc);
 		}
 	}
 }

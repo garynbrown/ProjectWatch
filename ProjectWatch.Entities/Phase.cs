@@ -36,6 +36,11 @@ namespace ProjectWatch.Entities
 			_phaseName = phaseName;
 			Billable = billable;
 		}
+
+		public Phase()
+		{
+			
+		}
 		#endregion
 
 		#region Primitive Properties
@@ -207,12 +212,13 @@ namespace ProjectWatch.Entities
 
 		#endregion
 
-		public int EntityId
+		#region Contract_Implementations
+		public override int EntityId
 		{
 			get { return PhaseId; }
 			set { PhaseId = value; }
 		}
+		#endregion
 
-		public string PathName => "Phase";
 	}
 }

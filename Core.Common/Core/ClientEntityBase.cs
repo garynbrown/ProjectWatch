@@ -253,12 +253,8 @@ namespace Core.Common.Core
 
 
 
-		public int EntityId
-		{
-			get { return -1; }
-			set{int i = value;}
-		}
+		public abstract int EntityId { get; set; }
 
-		public string PathName => String.Empty;
+		//public abstract string PathName { get;  } 
 	}
 }

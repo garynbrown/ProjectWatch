@@ -175,7 +175,7 @@ namespace ProjectWatch.Entities
 			}
 		}
 
-		public int EntityId
+		public override int EntityId
 		{
 			get
 			{
@@ -189,6 +189,7 @@ namespace ProjectWatch.Entities
 		}
 
 		public string PathName  => "Billing";
+
 
 		private string _note;
 
