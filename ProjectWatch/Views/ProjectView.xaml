@@ -1,27 +1,17 @@
 ﻿<core:UserControlViewBase
+    x:Class="ProjectWatch.Views.ProjectView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectWatch.Views"
         xmlns:core="clr-namespace:Core.Common.UI;assembly=Core.Common"
-        xmlns:ViewModel="clr-namespace:ProjectWatch.ViewModel" x:Class="ProjectWatch.Views.ProjectView"
+        xmlns:ViewModel="clr-namespace:ProjectWatch.ViewModel" 
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=ViewModel:ProjectViewModel, IsDesignTimeCreatable=True }"
         Height="470" Width="550" Background="#FF6894A2">
-    <core:UserControlViewBase.Resources>
-        <DataTemplate x:Key="ProjectTemplate">
-            <StackPanel>
-               <TextBlock Text="{Binding Name}"/>
-               <!--<TextBlock Text="{Binding ContactId}"/>
-                <TextBlock Text="{Binding CostQuote}"/>
-                <CheckBox IsChecked="{Binding IsDirty, Mode=OneWay}"/>
-                <CheckBox IsChecked="{Binding IsValid, Mode=OneWay}"/>
-                <TextBlock Text="{Binding Note}"/>
-                <TextBlock Text="{Binding ProjectId}"/>
-                <TextBlock Text="{Binding TimeQuote}"/>-->
-            </StackPanel>
-        </DataTemplate>
+
+    <!--<core:UserControlViewBase.Resources>
         <DataTemplate x:Key="PhaseTemplate">
             <StackPanel>
                 <CheckBox IsChecked="{Binding Billable}"/>
@@ -37,7 +27,7 @@
                 <TextBlock Text="{Binding TimeQuote}"/>
             </StackPanel>
         </DataTemplate>
-    </core:UserControlViewBase.Resources>
+    </core:UserControlViewBase.Resources>-->
 
     <Grid>
         <TextBlock x:Name="ProjectTitleBox" HorizontalAlignment="Stretch" Height="17.4" Margin="198.4,10,207.6,0" TextWrapping="Wrap" Text="Project Maintanence" VerticalAlignment="Top" Width="Auto"/>
@@ -50,15 +40,60 @@
         <TextBlock x:Name="textBox_Copy" HorizontalAlignment="Left" Height="28.8" Margin="101.8,0,0,63" TextWrapping="Wrap" Text="Calculated Contact name" VerticalAlignment="Bottom" Width="105.4"/>
         <Label x:Name="label_Copy1" Content="Name" HorizontalAlignment="Left" Height="28.8" Margin="33.6,0,0,135.6" VerticalAlignment="Bottom" Width="63.2"/>
         <Label x:Name="label_Copy2" Content="Total Hours" Height="28.8" Margin="248.8,0,222.867,101.8" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="textBox_Copy2" HorizontalAlignment="Right" Height="28.8" Margin="0,0,86,96.8" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Bottom" Width="105.4"/>
+        <TextBlock x:Name="textBox_Copy2" HorizontalAlignment="Right" Height="28.8" Margin="0,0,86,96.8" TextWrapping="Wrap" Text="{Binding SelectedProject.TimeQuote}" VerticalAlignment="Bottom" Width="105.4"/>
         <Label x:Name="label_Copy3" Content="Hours Not Billed" Height="28.8" Margin="248.8,0,196.4,68" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="textBox_Copy3" HorizontalAlignment="Right" Height="28.8" Margin="0,0,86,68" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Bottom" Width="105.4"/>
+        <TextBlock x:Name="textBox_Copy3" HorizontalAlignment="Right" Height="28.8" Margin="0,0,86,68" TextWrapping="Wrap" Text="{Binding SelectedProject.CostQuote}" VerticalAlignment="Bottom" Width="105.4"/>
         <Label x:Name="label_Copy4" Content="Description" Height="28.8" Margin="248.8,0,227.867,135.6" VerticalAlignment="Bottom"/>
-        <ListBox x:Name="ProjectsListBox" HorizontalAlignment="Left" ItemTemplate="{DynamicResource ProjectTemplate}" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,33.6,0,196.4" Width="152"/>
-        <ListBox x:Name="PhasesListBox" ItemTemplate="{DynamicResource PhaseTemplate}" ItemsSource="{Binding Phases}" Margin="0,33.6,10,196.4" HorizontalAlignment="Right" Width="154.4"/>
+        <!--<ListBox x:Name="ProjectsListBox" HorizontalAlignment="Left"  ItemsSource="{Binding DataContext.Projects, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" SelectedItem="{Binding SelectedProject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,33.6,0,196.4" Width="152"/>-->
+        <!--<ListBox x:Name="ProjectsListBox" HorizontalAlignment="Left" ItemTemplate="{DynamicResource ProjectTemplate}" ItemsSource="{Binding DataContext.Projects, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" SelectedItem="{Binding SelectedProject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,33.6,0,196.4" Width="152"/>-->
+        <ListBox x:Name="ProjectsListBox" HorizontalAlignment="Left" ItemsSource="{Binding DataContext.ProjectMainProjects, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" SelectedItem="{Binding SelectedProject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,33.6,0,196.4" Width="152">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <Hyperlink Command="{Binding DataContext.EditProjectCommand, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" CommandParameter="{Binding}">
+                                    <TextBlock Text="Edit"  />
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock Text="  "></TextBlock>
+                            <TextBlock>
+                                <Hyperlink Command="{Binding DataContext.DeleteProjectCommand, RelativeSource={RelativeSource AncestorType=local:ProjectView }}" CommandParameter="{Binding}" >
+                                    <TextBlock Text="Del" />
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock Text="{Binding Name}" Padding="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <ListBox x:Name="PhasesListBox"  ItemsSource="{Binding Phases}" SelectedItem="{Binding SelectedPhase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,34,10.4,219.4" HorizontalAlignment="Right" Width="154" >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <Hyperlink Command="{Binding DataContext.EditPhaseCommand, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" CommandParameter="{Binding}">
+                                    <TextBlock Text="Edit"  />
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock Text="  "></TextBlock>
+                            <TextBlock>
+                                <Hyperlink Command="{Binding DataContext.DeletePhaseCommand, RelativeSource={RelativeSource AncestorType=local:ProjectView }}" CommandParameter="{Binding}" >
+                                    <TextBlock Text="Del" />
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock Text="{Binding PhaseName}" Padding="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <TextBox Text="{Binding CurrentProject.Name, Mode=TwoWay}" Margin="75.8,309.602,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="131.4" Height="19.2"/>
         <TextBox Text="{Binding CurrentProject.Note, Mode=TwoWay}" Margin="327.133,285.466,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="166.067" Height="53.934"/>
-
+        <Button x:Name="AddProjectButton" Content="Add New Project"  Command="{Binding DataContext.AddProjectCommand, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" HorizontalAlignment="Left" Margin="32,274,0,0" VerticalAlignment="Top" Width="102"/>
+        <Button x:Name="AddPhaseButton" Content="Add New Phase"  Command="{Binding DataContext.AddPhaseCommand, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" CommandParameter="{Binding SelectedProject}" IsEnabled="{Binding CanAddPhase}" HorizontalAlignment="Left" Margin="421,251,0,0" VerticalAlignment="Top" Width="102" RenderTransformOrigin="0.524,-0.741"/>
     </Grid>
 </core:UserControlViewBase>
 

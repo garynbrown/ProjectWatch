@@ -7,11 +7,27 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Core.Common.Contracts;
 using Core.Common.Core;
+using Newtonsoft.Json;
 
 namespace ProjectWatch.Entities
 {
-	public class Contact : ClientEntityBase, IIdentifiableEntity
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
+	public class Contact : ClientEntityBase, IIdentifiableEntity, ICloneable
 	{
+		public Contact()
+		{
+			
+		}
+		public Contact(int companyId) : this(companyId,-1)
+		{
+			
+		}
+
+		public Contact(int companyId, int contactId)
+		{
+			_companyId = companyId;
+			_contactId = contactId;
+		}
 		#region Factory Method
 
 		/// <summary>
@@ -34,11 +50,13 @@ namespace ProjectWatch.Entities
 		private string _zipCode;
 		private string _city;
 		private string _street2;
-		private string _streete1;
+		private string _street1;
 		private int _contactId;
 		private string _firstName;
 		private string _lastName;
 		private int _companyId;
+		private bool _isProjectContact;
+		private bool _isBillingContact;
 
 		[DataMember]
 		public int ContactId
@@ -105,12 +123,12 @@ namespace ProjectWatch.Entities
 		//partial void OnCompanyChanging(global::System.String value);
 		//partial void OnCompanyChanged();
 
-		public string Streete1
+		public string Street1
 		{
-			get { return _streete1; }
+			get { return _street1; }
 			set
 			{
-				_streete1 = value;
+				_street1 = value;
 			}
 		}
 
@@ -192,14 +210,43 @@ namespace ProjectWatch.Entities
 			}
 		}
 
+
+
 		#endregion
 
+		#region Contract_Implementations
+
+		public object Clone()
+		{
+			Contact c = new Contact();
+			c.FirstName = _firstName;
+			c.LastName = _lastName;
+			c.Email = _email;
+			c.ContactId = _contactId;
+			c.CompanyId = _companyId;
+			c.Phone1 = _phone1;
+			c.Phone2 = _phone2;
+			c.Street1 = _street1;
+			c.Street2 = Street2;
+			c.City = _city;
+			c.State = _state;
+			c.Note = _note;
+			c.ZipCode = _zipCode;
+
+			return c;
+		}
+		[JsonIgnore]
 		public override int EntityId
 		{
 			get { return ContactId; }
 			set { ContactId = value; }
 		}
+		#endregion
 
+		public override string ToString()
+		{
+			return $"{LastName}, {FirstName}";
+		}
 	}
 }
 

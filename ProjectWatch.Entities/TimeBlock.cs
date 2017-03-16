@@ -9,11 +9,13 @@ using System.Runtime.Serialization;
 using Core.Common.Contracts;
 using Core.Common.Core;
 using FluentValidation;
+using Newtonsoft.Json;
 
 namespace ProjectWatch.Entities
 {
 	[DataContract]
-	public class TimeBlock: ObservableObject
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
+	public class TimeBlock: ObservableObject, ICloneable
 	{
 		private const int WorkBlockType = 1;
 		const int BreakBlockType = 0;
@@ -25,6 +27,31 @@ namespace ProjectWatch.Entities
 		private double _hoursOnTask;
 		private double _hoursOnBreak;
 
+		public static TimeBlock CreateWorkBlock(DateTime startTime, DateTime endTime, int projectId, int phaseId)
+		{
+			TimeBlock t = new TimeBlock(startTime, endTime);
+			t.ProjectId = projectId;
+			t.PhaseId = phaseId;
+			TimeSpan ts = t.GetTimeSpan();
+			t.HoursOnTask = ts.Hours + (double) (ts.Minutes/60.0d) + (double) (ts.Seconds/360.0d);
+			t.HoursOnBreak = 0.0d;
+			return t;
+		}
+		public static TimeBlock CreateBreakBlock(DateTime startTime, DateTime endTime)
+		{
+			TimeBlock t = new TimeBlock(startTime, endTime,0);
+			t.ProjectId = -1;
+			t.PhaseId = -1;
+			TimeSpan ts = t.GetTimeSpan();
+			t.HoursOnBreak = ts.Hours + (double)(ts.Minutes / 60.0d) + (double)(ts.Seconds / 360.0d);
+			t.HoursOnTask = 0.0d;
+			return t;
+		}
+
+		public TimeSpan GetTimeSpan()
+		{ return new TimeSpan(EndTime.Hour - StartTime.Hour, EndTime.Minute - StartTime.Minute, EndTime.Second - StartTime.Second); }
+
+		#region Constructors
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TimeBlock"/> class.
 		/// </summary>
@@ -37,30 +64,31 @@ namespace ProjectWatch.Entities
 			this.StartTime = startTime;
 			this.EndTime = endTime;
 		}
-		[DataMember]
-		public int TimeBlockType { get; set; }
-
-
-		public override string ToString()
-		{
-			string blockType = TimeBlockType == WorkBlockType ? "Work" : "Break";
-			return $" {blockType} started at {StartTime} and ended at {EndTime}";
-		}
-		[DataMember]
-		public int ProjectId
-		{
-			get { return _projectId; }
-			set
-			{
-				_projectId = value;
-				
-			}
-		}
+		#endregion
+		#region Properties
 		[DataMember]
 		public DateTime EndTime
 		{
 			get { return _endTime; }
 			set { Set(() => EndTime, ref _endTime, value); }
+		}
+
+		public double HoursOnBreak
+		{
+			get { return _hoursOnBreak; }
+			set { _hoursOnBreak = value; }
+		}
+
+		public double HoursOnTask
+		{
+			get { return _hoursOnTask; }
+			set { _hoursOnTask = value; }
+		}
+
+		public string Note
+		{
+			get { return _note; }
+			set { _note = value; }
 		}
 
 		[DataMember]
@@ -72,6 +100,16 @@ namespace ProjectWatch.Entities
 				_phaseId = value;
 			}
 		}
+		[DataMember]
+		public int ProjectId
+		{
+			get { return _projectId; }
+			set
+			{
+				_projectId = value;
+				
+			}
+		}
 		
 
 		[DataMember]
@@ -81,23 +119,27 @@ namespace ProjectWatch.Entities
 			set
 			{ Set(() => StartTime, ref _startTime, value); }
 		}
+		[DataMember]
+		public int TimeBlockType { get; set; }
+		#endregion
 
-		public double HoursOnTask
+		#region Overrides
+		public override string ToString()
 		{
-			get { return _hoursOnTask; }
-			set { _hoursOnTask = value; }
+			string blockType = TimeBlockType == WorkBlockType ? "Work" : "Break";
+			return $" {blockType} started at {StartTime} and ended at {EndTime}";
 		}
+		#endregion
 
-		public double HoursOnBreak
+		public object Clone()
 		{
-			get { return _hoursOnBreak; }
-			set { _hoursOnBreak = value; }
-		}
-
-		public string Note
-		{
-			get { return _note; }
-			set { _note = value; }
+			TimeBlock t = new TimeBlock(StartTime, EndTime, TimeBlockType);
+			t.HoursOnBreak = HoursOnBreak;
+			t.HoursOnTask = HoursOnTask;
+			t.PhaseId = PhaseId;
+			t.ProjectId = ProjectId;
+			t.Note = Note;
+			return t;
 		}
 	}
 }

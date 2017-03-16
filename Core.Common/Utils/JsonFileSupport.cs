@@ -37,7 +37,33 @@ namespace Core.Common.Utils
 		{
 			return JsonConvert.DeserializeObject<T>(jsonContent);
 		}
-		//TODO: chage the method
+		public static  bool WriteFile(string filePath, string jsonContent)
+		{
+			bool retValue = true;
+			string location = Path.Combine(DataPath, filePath + ".json");
+			try
+			{
+
+				if (!Directory.Exists(Path.GetDirectoryName(location)))
+				{
+					string dir = Path.GetDirectoryName(location);
+					Directory.CreateDirectory(dir);
+				}
+				StringBuilder sb = new StringBuilder(jsonContent);
+				using (StreamWriter writer = new StreamWriter(location))
+				{
+
+					 writer.Write(jsonContent);
+				}
+				//File.WriteAllText(location, jsonContent);
+			}
+			catch (Exception ex)
+			{
+				return false;
+			}
+			return retValue;
+		}
+
 		public static async Task<bool> WriteFileAsync(string filePath, string jsonContent)
 		{
 			bool retValue = true;
@@ -77,9 +103,11 @@ namespace Core.Common.Utils
 
 			try
 			{
-				using (StreamReader reader = new StreamReader(location))
+				using (StreamReader reader = File.OpenText(location))
 				{
+					//retValue = reader.ReadToEnd();
 					  retValue = await reader.ReadToEndAsync();
+					//retValue = await Task.Run(() => reader.ReadToEnd());
 				}
 			}
 			catch (Exception ex)

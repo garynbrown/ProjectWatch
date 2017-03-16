@@ -7,12 +7,14 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Core.Common.Contracts;
 using Core.Common.Core;
+using Newtonsoft.Json;
 
 
 namespace ProjectWatch.Entities
 {
 	[DataContract]
-	public class Project : ClientEntityBase, IIdentifiableEntity
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
+	public class Project : ClientEntityBase, IIdentifiableEntity, ICloneable
 	{
 		#region Factory Method
 
@@ -58,7 +60,7 @@ namespace ProjectWatch.Entities
 			}
 		}
 		private int _projectId;
-
+		public int LastPhaseId { get; set; }
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
@@ -148,19 +150,68 @@ namespace ProjectWatch.Entities
 			}
 		}
 		private string _note;
+		private DateTime _startDate;
+		private DateTime _endDate;
+
+		[DataMember]
+		public DateTime StartDate
+		{
+			get { return _startDate; }
+			set { _startDate = value; }
+		}
+
+		[DataMember]
+		public DateTime EndDate
+		{
+			get { return _endDate; }
+			set { _endDate = value; }
+		}
+		[DataMember]
+		public int BillingContactId { get; set; }
+
+		[DataMember]
+		public int ManagementContactId { get; set; }
+
+		[DataMember]
+		public int CompnayId { get; set; }
+	
 
 		#endregion
 
+		#region Overrides
 		public override string ToString()
 		{
 			return _name;
 		}
+		#endregion
 
+		#region Contract_Implementations
+
+		public object Clone()
+		{
+			Project p = new Project();
+			p.ProjectId = ProjectId;
+			p.LastPhaseId = LastPhaseId;
+			p.ContactId = ContactId;
+			p._clientId = _clientId;
+			p.Name = Name;
+			p.Note = Note;
+			p.CostQuote = CostQuote;
+			p.TimeQuote = TimeQuote;
+			p.StartDate = StartDate;
+			p.EndDate = EndDate;
+			p.BillingContactId = BillingContactId;
+			p.ManagementContactId = ManagementContactId;
+			p.CompnayId = CompnayId;
+
+			return p;
+		}
+		[JsonIgnore]
 		public override int EntityId
 		{
 			get { return ProjectId; }
 			set { ProjectId = value; }
 		}
-
+		#endregion
 	}
 }

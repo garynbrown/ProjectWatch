@@ -22,12 +22,12 @@
     </core:UserControlViewBase.DataContext>
     <Grid>
         <TabControl>
-            <TabItem Header="{Binding SettingsViewModel.ViewTitle}" Content="{Binding SettingsViewModel}"/>
+            <TabItem Header="{Binding ProjectMainViewModel.ViewTitle}" Content="{Binding ProjectMainViewModel}"/>
+            <TabItem Header="{Binding CompanyMainViewModel.ViewTitle}" Content="{Binding CompanyMainViewModel}"/>
+            <TabItem Header="{Binding TimeCardMainViewModel.ViewTitle}" Content="{Binding TimeCardMainViewModel}"/>
             <TabItem Header="{Binding AdministationViewModel.ViewTitle}" Content="{Binding AdministationViewModel}"/>
-            <TabItem Header="{Binding ProjectViewModel.ViewTitle}" Content="{Binding ProjectViewModel}"/>
-            <TabItem Header="{Binding PhaseViewModel.ViewTitle}" Content="{Binding PhaseViewModel}"/>
             <TabItem Header="{Binding ReportsViewModel.ViewTitle}" Content="{Binding ReportsViewModel}"/>
-            <TabItem Header="{Binding TimecardViewModel.ViewTitle}" Content="{Binding TimecardViewModel}"/>
+            <TabItem Header="{Binding SettingsViewModel.ViewTitle}" Content="{Binding SettingsViewModel}"/>
         </TabControl>
     </Grid>
 </core:UserControlViewBase>

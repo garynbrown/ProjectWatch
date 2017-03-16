@@ -16,11 +16,13 @@ using Core.Common.Utils;
 using System.ComponentModel;
 using Core.Common.Contracts;
 using System.ComponentModel.Composition.Hosting;
+using Newtonsoft.Json;
 
 namespace Core.Common.Core
 {
 	// this is taken from RentalCar -> Core.Common.Core.ObjectBase
 	// this is used as the base object for Model / entity/ object model classes
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public abstract class ClientEntityBase : ObservableObject , IExtensibleDataObject, IDataErrorInfo,IDirtyCapable,IIdentifiableEntity
 	{
 		public ClientEntityBase()
@@ -38,6 +40,7 @@ namespace Core.Common.Core
 
 		#region IExtensibleDataObject Members
 
+		[JsonIgnore]
 		public ExtensionDataObject ExtensionData { get; set; }
 
 		#endregion
@@ -45,6 +48,7 @@ namespace Core.Common.Core
 		#region IDirtyCapable members
 
 		[NotNavigable]
+		[JsonIgnore]
 		public virtual bool IsDirty
 		{
 			get { return _IsDirty; }
@@ -99,6 +103,11 @@ namespace Core.Common.Core
 					o.IsDirty = false;
 				return false;
 			}, coll => { });
+		}
+
+		public void MakeDirty()
+		{
+			IsDirty = true;
 		}
 
 		#endregion
@@ -194,6 +203,7 @@ namespace Core.Common.Core
 		}
 
 		[NotNavigable]
+		[JsonIgnore]
 		public IEnumerable<ValidationFailure> ValidationErrors
 		{
 			get { return _ValidationErrors; }
@@ -210,6 +220,7 @@ namespace Core.Common.Core
 		}
 
 		[NotNavigable]
+		[JsonIgnore]
 		public virtual bool IsValid
 		{
 			get

@@ -1,0 +1,21 @@
+﻿<Core:UserControlViewBase x:Class="ProjectWatch.Views.CompanyEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjectWatch.Views"
+             xmlns:Core="clr-namespace:Core.Common.UI;assembly=Core.Common"
+             mc:Ignorable="d" 
+       Height="470" Width="550" Background="#FF6894A2">
+    <Grid>
+        
+        
+        <Button x:Name="Save" Content="Save"  Command="{Binding SaveCommand}"  HorizontalAlignment="Left" Margin="44,334,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="Exit" Content="Exit" Command="{Binding DataContext.CompanyViewCommand, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}" HorizontalAlignment="Left" Margin="217,334,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="TitleBlock" HorizontalAlignment="Left" Margin="168,44,0,0" TextWrapping="Wrap" Text="Company Maintainence" VerticalAlignment="Top"/>
+        <TextBlock x:Name="CompanyNametextBlock" HorizontalAlignment="Left" Margin="168,89,0,0" TextWrapping="Wrap" Text="Company Name" VerticalAlignment="Top"/>
+        <TextBox x:Name="CompanyName" HorizontalAlignment="Left" Height="23" Margin="152,110,0,0" TextWrapping="Wrap" Text="{Binding CompanyName}" VerticalAlignment="Top" Width="120"/>
+
+    </Grid>
+</Core:UserControlViewBase>
+

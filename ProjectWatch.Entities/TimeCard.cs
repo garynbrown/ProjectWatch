@@ -10,11 +10,13 @@ using System.Runtime.Serialization;
 using Core.Common.Contracts;
 using Core.Common.Core;
 using FluentValidation;
+using Newtonsoft.Json;
 
 namespace ProjectWatch.Entities
 {
 	[DataContract]
-	public class TimeCard : ClientEntityBase, IIdentifiableEntity
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
+	public class TimeCard : ClientEntityBase, IIdentifiableEntity, ICloneable
 	{
 		#region Factory Method
 
@@ -26,35 +28,24 @@ namespace ProjectWatch.Entities
 		{
 			return new TimeCard() { TimeId = time_ID };
 		}
-
-		public TimeCard(DateTime date)
+		public static int MakeTimeCardIdFromDate(DateTime date)
 		{
-			TimeId = MakeIdFromDate(date);
+			return date.Year * 10000 + date.Month * 100 + date.Day;
+
 		}
 
-		///// <summary>
-		///// Initializes a new instance of the <see cref="TimeCard"/> class.
-		///// </summary>
-		///// <param name="HoursOnBreak"></param>
-		///// <param name="Note"></param>
-		///// <param name="HoursOnTask"></param>
-		///// <param name="PhaseId"></param>
-		///// <param name="ProjectId"></param>
-		///// <param name="EndTime"></param>
-		///// <param name="TimeId"></param>
-		///// <param name="StartTime"></param>
-		//public TimeCard(double hoursOnBreak, string note, double hoursOnTask, int phaseId, int projectId, DateTime endTime, int timeId, DateTime startTime)
-		//{
+		public string TimeCardDate()
+		{
+			int year = (int)(TimeId/10000);
+			int month = (int)((TimeId-(year*10000))/100);
+			int day = ((TimeId - (year*10000 + month*100)));
+			return $"{month}/{day}/{year}";
+		}
+		public TimeCard(DateTime date)
+		{
+			TimeId = MakeTimeCardIdFromDate(date);
+		}
 
-		//	ActiveBreakTimeBlock.HoursOnBreak = hoursOnBreak;
-		//	ActiveTaskTimeBlock.Note = note;
-		//	ActiveTaskTimeBlock.HoursOnTask = hoursOnTask;
-		//	ActiveTaskTimeBlock.PhaseId = phaseId;
-		//	ActiveTaskTimeBlock.ProjectId = projectId;
-		//	ActiveTaskTimeBlock.EndTime = endTime;
-		//	_timeId = timeId;
-		//	ActiveTaskTimeBlock.StartTime = startTime;
-		//}
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TimeCard"/> class.
 		/// </summary>
@@ -68,8 +59,8 @@ namespace ProjectWatch.Entities
 
 		private TimeBlock _activeTaskTimeBlock;
 		private TimeBlock _activeBreakTimeBlock;
-		private List<TimeBlock> workBlocks = new List<TimeBlock>();
-		private List<TimeBlock> breakBlocks = new List<TimeBlock>();
+		public List<TimeBlock> WorkBlocks = new List<TimeBlock>();
+		public List<TimeBlock> BreakBlocks = new List<TimeBlock>();
 		private int _timeId;
 
 
@@ -77,33 +68,33 @@ namespace ProjectWatch.Entities
 		public int TimeId
 		{
 			get { return  _timeId; }
-			private set { _timeId = value; }
+			set { _timeId = value; }
 		}
 
 
-		[DataMember]
-		public double HoursOnTask
-		{
-			get { return ActiveTaskTimeBlock.HoursOnTask; }
-			set
-			{
-				ActiveTaskTimeBlock.HoursOnTask = value;
-				RaisePropertyChanged(() => HoursOnTask);
-			}
-		}
+		//[DataMember]
+		//public double HoursOnTask
+		//{
+		//	get { return ActiveTaskTimeBlock.HoursOnTask; }
+		//	set
+		//	{
+		//		ActiveTaskTimeBlock.HoursOnTask = value;
+		//		RaisePropertyChanged(() => HoursOnTask);
+		//	}
+		//}
 
 
-		[DataMember]
-		public double HoursOnBreak
-		{
-			get { return ActiveBreakTimeBlock.HoursOnBreak; }
-			set
-			{
-				ActiveBreakTimeBlock.HoursOnBreak = value;
-				RaisePropertyChanged(() => HoursOnBreak);
+		//[DataMember]
+		//public double HoursOnBreak
+		//{
+		//	get { return ActiveBreakTimeBlock.HoursOnBreak; }
+		//	set
+		//	{
+		//		ActiveBreakTimeBlock.HoursOnBreak = value;
+		//		RaisePropertyChanged(() => HoursOnBreak);
 
-			}
-		}
+		//	}
+		//}
 
 
 
@@ -116,38 +107,71 @@ namespace ProjectWatch.Entities
 		//		_note = value;
 		//	}
 		//}
-
-		public void AddWorkBlock(DateTime startTime, DateTime stopTime)
+		public void AddWorkBlock(TimeBlock timeBlock)
 		{
-			TimeBlock workBlock = new TimeBlock(startTime, stopTime, 1);
-			workBlocks.Add(workBlock);
+			if (timeBlock.TimeBlockType == 1)
+			{
+				WorkBlocks.Add(timeBlock);
+			}
+			else
+			{
+				AddBreakBlock(timeBlock);
+			}
 		}
 
-		public void AddBreakBlock(DateTime startTime, DateTime stopTime)
+		public void AddBreakBlock(TimeBlock timeBlock)
 		{
-			TimeBlock breakBlock = new TimeBlock(startTime,stopTime, 0);
-			breakBlocks.Add(breakBlock);
+			if (timeBlock.TimeBlockType == 0)
+			{
+				BreakBlocks.Add(timeBlock);
+			}
+			else
+			{
+				AddWorkBlock(timeBlock);
+			}
 		}
+
+		//public void AddWorkBlock(DateTime startTime, DateTime stopTime)
+		//{
+		//	TimeBlock workBlock = new TimeBlock(startTime, stopTime, 1);
+		//	WorkBlocks.Add(workBlock);
+		//}
+
+		//public void AddBreakBlock(DateTime startTime, DateTime stopTime)
+		//{
+		//	TimeBlock breakBlock = new TimeBlock(startTime,stopTime, 0);
+		//	BreakBlocks.Add(breakBlock);
+		//}
 		#endregion
 		#region Contract_Implementations
 
+		[JsonIgnore]
 		public override int EntityId
 		{
 			get { return TimeId; }
 			set { }
 		}
 
+		#region Properties
+		[JsonIgnore]
 		public TimeBlock ActiveTaskTimeBlock
 		{
 			get { return _activeTaskTimeBlock; }
 			set { _activeTaskTimeBlock = value; }
 		}
-
+		[JsonIgnore]
 		public TimeBlock ActiveBreakTimeBlock
 		{
 			get { return _activeBreakTimeBlock; }
 			set { _activeBreakTimeBlock = value; }
 		}
+
+		public int ProjectId { get; set; }
+		public int PhaseId { get; set; }
+		#endregion
+		#endregion
+		#region Methods
+
 
 		protected override IValidator GetValidator()
 		{
@@ -166,13 +190,25 @@ namespace ProjectWatch.Entities
 			}
 		}
 		#endregion
-		#region Methods
-		int MakeIdFromDate(DateTime date)
+
+		public object Clone()
 		{
-			return date.Year * 10000 + date.Month * 100 + date.Day;
+			TimeCard t = new TimeCard();
+			t.TimeId = TimeId;
+			t.PhaseId = PhaseId;
+			t.ProjectId = ProjectId;
+			t.BreakBlocks = new List<TimeBlock>();
+			foreach (TimeBlock _timeBlock in BreakBlocks)
+			{
+				t.BreakBlocks.Add(_timeBlock.Clone() as TimeBlock);
+			}
+			t.WorkBlocks = new List<TimeBlock>();
+			foreach (TimeBlock _timeBlock in WorkBlocks)
+			{
+				t.WorkBlocks.Add(_timeBlock.Clone() as TimeBlock);
+			}
 
+			return t;
 		}
-		#endregion
-
 	}
 }

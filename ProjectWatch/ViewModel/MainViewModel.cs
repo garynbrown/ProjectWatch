@@ -35,23 +35,26 @@ namespace ProjectWatch.ViewModel
 			get { return ClientEntityBase.Container.GetExportedValue<SettingsViewModel>(); }
 		}
 		[Import]
-		public ProjectViewModel ProjectViewModel
+		public ProjectMainViewModel ProjectMainViewModel
 		{
-			get { return ClientEntityBase.Container.GetExportedValue<ProjectViewModel>(); }
+			get { return ClientEntityBase.Container.GetExportedValue<ProjectMainViewModel>(); }
 		}
 		[Import]
-		public PhaseViewModel PhaseViewModel
+		public CompanyMainViewModel CompanyMainViewModel 
 		{
-			get { return ClientEntityBase.Container.GetExportedValue<PhaseViewModel>(); }
+			get { return ClientEntityBase.Container.GetExportedValue<CompanyMainViewModel>(); }
 		}
 
 
 		[Import]
 		public ReportsViewModel ReportsViewModel { get; private set; }
 		[Import]
-		public TimecardViewModel TimecardViewModel { get; private set; }
+		public TimeCardMainViewModel TimeCardMainViewModel
+		{
+			get { return ClientEntityBase.Container.GetExportedValue<TimeCardMainViewModel>(); }
+		}
 
-        /// <summary>
+		/// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()

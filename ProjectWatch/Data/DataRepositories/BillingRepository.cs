@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using Core.Common.Contracts;
 using Core.Common.Core;
 using Core.Common.Data;
+using Core.Common.Utils;
+using Newtonsoft.Json;
 using ProjectWatch.Contracts.RepositoryInterfaces;
+using ProjectWatch.Data.DataSets;
 using ProjectWatch.Entities;
 
 namespace ProjectWatch.Data.DataRepositories
@@ -24,6 +27,38 @@ namespace ProjectWatch.Data.DataRepositories
 
 		public BillingRepository(EntitySetBase<Billing> targetEntitySet) : base(targetEntitySet)
 		{
+		}
+		#endregion
+
+		#region Overrides
+		protected override void DeserializeEntitySet()
+		{
+			string jString =  JsonFileSupport.JsonReadFile(TargetEntitySet.PathName);
+			var ts = JsonConvert.DeserializeObject<BillingSet>(jString);
+			if (ts?.EntitySet == null)
+			{
+				TargetEntitySet.EntitySet = new List<Billing>();
+			}
+			else
+			{
+				TargetEntitySet = ts;
+			}
+			TargetEntitySet.IsDirty = false;
+		}
+
+		protected override async void DeserializeEntitySetAsync()
+		{
+			string jString = await JsonFileSupport.JsonReadFileAsync(TargetEntitySet.PathName);
+			var ts = JsonConvert.DeserializeObject<BillingSet>(jString);
+			if (ts?.EntitySet == null)
+			{
+				TargetEntitySet.EntitySet = new List<Billing>();
+			}
+			else
+			{
+				TargetEntitySet = ts;
+			}
+			TargetEntitySet.IsDirty = false;
 		}
 		#endregion
 	}

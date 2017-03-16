@@ -9,7 +9,7 @@
              xmlns:viewModel="clr-namespace:ProjectWatch.ViewModel"
              >
     <Application.Resources>
-    <ResourceDictionary>
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="TimerControlButtons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -41,20 +41,29 @@
                 <Setter Property="TextBlock.FontSize" Value="16" />
             </Style>-->
             <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:ProjectWatch.ViewModel" />
-        <DataTemplate DataType="{x:Type viewModel:DashboardViewModel}">
-            <views:DashboardView/>
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:DashboardViewModel}">
+                <views:DashboardView/>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:MainViewModel}">
                 <views:MainView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:AdministationViewModel}">
                 <views:AdministationView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:ProjectMainViewModel}">
+                <views:ProjectMainView/>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:ProjectViewModel}">
                 <views:ProjectView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:ProjectEditViewModel}">
+                <views:ProjectEditView/>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:PhaseViewModel}">
                 <views:PhaseView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:PhaseEditViewModel}">
+                <views:PhaseEditView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:ReportsViewModel}">
                 <views:ReportsView/>
@@ -65,6 +74,24 @@
             <DataTemplate DataType="{x:Type viewModel:SettingsViewModel}">
                 <views:SettingsView/>
             </DataTemplate>
-        </ResourceDictionary> 
+            <DataTemplate DataType="{x:Type viewModel:CompanyViewModel}">
+                <views:CompanyView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:CompanyMainViewModel}">
+                <views:CompanyMainView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:CompanyEditViewModel}">
+                <views:CompanyEditView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:ContactEditViewModel}">
+                <views:ContactEditView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:TimeCardMainViewModel}">
+                <views:TimeCardMainView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:TimecardEditViewModel}">
+                <views:TimecardEditView/>
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

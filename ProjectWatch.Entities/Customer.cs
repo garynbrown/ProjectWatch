@@ -7,9 +7,11 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Core.Common.Contracts;
 using Core.Common.Core;
+using Newtonsoft.Json;
 
 namespace ProjectWatch.Entities
 {
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public class Customer : ClientEntityBase, IIdentifiableEntity
 	{
 		#region Factory Method
@@ -194,6 +196,7 @@ namespace ProjectWatch.Entities
 		#endregion
 
 		#region Contract_Implementations
+		[JsonIgnore]
 		public override int EntityId
 		{
 			get {return CustomerId; }

@@ -21,6 +21,46 @@ namespace PWTest
 	[TestClass]
 	public class JasonRW
 	{
+		[TestMethod]
+		public void SerializeJsonProject()
+		{
+			string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"ProjectWatch\Data");
+			basePath = Path.Combine(basePath, "test.json");
+			JsonSerializer Jserializer = new JsonSerializer();
+			ProjectSet testProjectSet;
+			ProjectSet PS = new ProjectSet();
+			Project p1 = new Project() { ProjectId = 1, Name = "Project1" };
+			Project p2 = new Project() { ProjectId = 2, Name = "Project2" };
+			PS.EntitySet = new List<Project>();
+			List<Project> projects = PS.EntitySet as List<Project>;
+			projects.Add(p1);
+			projects.Add(p2);
+			string stringInput; 
+			Jserializer.Formatting = Formatting.Indented;
+						//TextReader reader = new StreamReader(basePath);
+			using (StreamWriter writer = new StreamWriter(basePath))
+			{
+				using (JsonWriter Jwriter = new JsonTextWriter(writer))
+				{
+					Jserializer.Serialize(Jwriter, PS);
+				}
+			}
+			using (TextReader reader = new StreamReader(basePath))
+			{
+				//using (JsonReader JsonReader = new JsonTextReader( reader))
+				//{
+				//t.Path = "empty";
+				stringInput = reader.ReadToEnd();
+				//					Jserializer.Deserialize<testObject>(stringInput);
+				testProjectSet = JsonConvert.DeserializeObject<ProjectSet>(stringInput);
+				//}
+			}
+			File.Delete(basePath);
+			List<Project> testList1 = PS.EntitySet as List<Project>;
+			List<Project> testList2 = testProjectSet.EntitySet as List<Project>;
+
+			Assert.AreEqual(testList1[0].Name,testList2[0].Name);
+		}
 
 		[TestMethod]
 		public void WriteJsonTest()
@@ -91,24 +131,34 @@ namespace PWTest
 		}
 
 		[TestMethod]
-		public async void LoadProjectTest()
+		public  void LoadProjectTest()
 		{
 			ProjectSet PS = new ProjectSet() ;
 			ProjectRepository PR = new ProjectRepository(PS);
-			var DS = await PR.GetAsync();
-			DS = await PR.GetAsync();
+			var DS =  PR.GetAsync().Result;
+			DS =  PR.GetAsync().Result;
 			Assert.AreEqual(PS.PathName,DS.PathName);
 		}
 
 		[TestMethod]
 		public  void AddTimeCard()
 		{
-			TimeCard tc = new TimeCard();
+			TimeCard tc = new TimeCard(DateTime.Now);
 			TimeCardSet tcs = new TimeCardSet();
 			tcs.EntitySet = new List<TimeCard>();
 			List<TimeCard> TimeCards = tcs.EntitySet as List<TimeCard>;
 			TimeCardRepository tcr = new TimeCardRepository(tcs);
 			var DS = tcr.AddAsync(tc);
+		}
+
+		[TestMethod]
+		public void GetTodaysTimeCard()
+		{
+			TimeCardSet tcs = new TimeCardSet();
+			tcs.EntitySet = new List<TimeCard>();
+			TimeCardRepository tcr = new TimeCardRepository(tcs);
+			var DS = tcr.GetTodaysTimeCard();
+
 		}
 	}
 }

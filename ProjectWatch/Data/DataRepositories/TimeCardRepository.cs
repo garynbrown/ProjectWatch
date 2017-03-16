@@ -24,6 +24,7 @@ namespace ProjectWatch.Data.DataRepositories
 		public TimeCardRepository()
 		{
 			base.TargetEntitySet = ClientEntityBase.Container.GetExportedValue<EntitySetBase<TimeCard>>();
+			base.TargetEntitySet.EntitySet = new List<TimeCard>();
 		}
 
 		public TimeCardRepository(EntitySetBase<TimeCard> targetEntitySet) : base(targetEntitySet)
@@ -35,12 +36,16 @@ namespace ProjectWatch.Data.DataRepositories
 
 		public override async Task<TimeCard> AddAsync(TimeCard timeCard)
 		{
-			int tcId = MakeIdFromDate(DateTime.Now);
+			int tcId = (timeCard.EntityId > 20160000) ? timeCard.EntityId :  TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
 			string tcPath = MakePathFromId(tcId);
 			TimeCard retEntity = null;
-			if (TargetEntitySet?.EntitySet == null)
+			if (TargetEntitySet == null)
 				return null;
-			List<TimeCard> Entities = (TargetEntitySet.EntitySet as List<TimeCard>) ?? new List<TimeCard>();
+			if (TargetEntitySet.EntitySet == null)
+			{
+				TargetEntitySet.EntitySet = new List<TimeCard>();
+			}
+			List<TimeCard> Entities = (TargetEntitySet.EntitySet as List<TimeCard>) ;
 			int indx = Entities.FindIndex(e => e.TimeId == timeCard.TimeId);
 			if (timeCard.TimeId > 0 && indx >= 0)
 			{
@@ -50,12 +55,40 @@ namespace ProjectWatch.Data.DataRepositories
 			{
 				timeCard.EntityId = tcId;
 				Entities.Add(timeCard);
-				string jsonString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
+				string jsonString = JsonConvert.SerializeObject(timeCard, Formatting.Indented);
 				bool isGood = await JsonFileSupport.WriteFileAsync(tcPath, jsonString);
 				TargetEntitySet.IsDirty = !isGood;
 			}
 			return timeCard;
 		}
+		public override TimeCard Add(TimeCard timeCard)
+		{
+			int tcId = (timeCard.EntityId > 20160000) ? timeCard.EntityId : TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
+			string tcPath = MakePathFromId(tcId);
+			TimeCard retEntity = null;
+			if (TargetEntitySet == null)
+				return null;
+			if (TargetEntitySet.EntitySet == null)
+			{
+				TargetEntitySet.EntitySet = new List<TimeCard>();
+			}
+			List<TimeCard> Entities = (TargetEntitySet.EntitySet as List<TimeCard>);
+			int indx = Entities.FindIndex(e => e.TimeId == timeCard.TimeId);
+			if (timeCard.TimeId > 0 && indx >= 0)
+			{
+				return Update(timeCard);
+			}
+			else
+			{
+				timeCard.EntityId = tcId;
+				Entities.Add(timeCard);
+				string jsonString = JsonConvert.SerializeObject(timeCard, Formatting.Indented);
+				bool isGood = JsonFileSupport.WriteFile(tcPath, jsonString);
+				TargetEntitySet.IsDirty = !isGood;
+			}
+			return timeCard;
+		}
+
 		public override async Task<TimeCard> GetAsync(int id)
 		{
 			string location = Path.Combine(JsonFileSupport.DataPath, MakePathFromId(id) + ".json");
@@ -64,7 +97,7 @@ namespace ProjectWatch.Data.DataRepositories
 				return null;
 			}
 
-			return await DeserializeTimeCard(id);
+			return await DeserializeTimeCardAsync(id);
 		}
 		public override async void RemoveAsync(int id)
 		{
@@ -95,30 +128,77 @@ namespace ProjectWatch.Data.DataRepositories
 			int indx = Entities.FindIndex(e => e.EntityId == timeCard.EntityId);
 			if (indx > -1)
 			{
+				string tcPath = MakePathFromId(timeCard.EntityId);
 				Entities.RemoveAt(indx);
 				Entities.Add(timeCard);
+				string jsonString = JsonConvert.SerializeObject(timeCard, Formatting.Indented);
+				bool isGood = await JsonFileSupport.WriteFileAsync(tcPath, jsonString);
+				TargetEntitySet.IsDirty = !isGood;
 			}
-			retEntity = await AddAsync(timeCard);
+			else
+			{
+				retEntity = await AddAsync(timeCard);			
+			}
 			return retEntity;
 		}
+		public override TimeCard Update(TimeCard timeCard)
+		{
+			TimeCard retEntity = null;
+			if (TargetEntitySet?.EntitySet == null)
+				return null;
+			List<TimeCard> Entities = (TargetEntitySet.EntitySet as List<TimeCard>) ?? new List<TimeCard>();
+			int indx = Entities.FindIndex(e => e.EntityId == timeCard.EntityId);
+			if (indx > -1)
+			{
+				string tcPath = MakePathFromId(timeCard.EntityId);
+				Entities.RemoveAt(indx);
+				Entities.Add(timeCard);
+				string jsonString = JsonConvert.SerializeObject(timeCard, Formatting.Indented);
+				bool isGood =  JsonFileSupport.WriteFile(tcPath, jsonString);
+				TargetEntitySet.IsDirty = !isGood;
+			}
+			else
+			{
+				retEntity = Add(timeCard);
+			}
+			return retEntity;
+		}
+
+		protected override void DeserializeEntitySet()
+		{
+			TargetEntitySet.EntitySet = new List<TimeCard>(GetDefaultRangeTimeCards());
+		}
+
+		protected override async void DeserializeEntitySetAsync()
+		{
+			TargetEntitySet.EntitySet = new List<TimeCard>(await GetDefaultRangeTimeCardsAsync());
+		}
+
 		#endregion
 
 		#region Contract_Implementations
 
-		public async Task<IEnumerable<TimeCard>> GetDefaultRangeTimeCards()
+		public IEnumerable<TimeCard> GetDefaultRangeTimeCards()
 		{
 			List<TimeCard> timeCards = new List<TimeCard>();
-			timeCards.AddRange(await  GetLastMonthsTimeCards());
-			timeCards.AddRange(await GetThisMonthsTimeCards());
+			timeCards.AddRange( GetLastMonthsTimeCards());
+			timeCards.AddRange( GetThisMonthsTimeCards());
 			return timeCards;
 		}
-		public async Task<IEnumerable<TimeCard>> GetLastMonthsTimeCards()
+		public async Task<IEnumerable<TimeCard>> GetDefaultRangeTimeCardsAsync()
+		{
+			List<TimeCard> timeCards = new List<TimeCard>();
+			timeCards.AddRange(await GetLastMonthsTimeCardsAsync());
+			timeCards.AddRange(await GetThisMonthsTimeCardsAsync());
+			return timeCards;
+		}
+		public IEnumerable<TimeCard> GetLastMonthsTimeCards()
 		{
 			List<TimeCard> timeCards = new List<TimeCard>();
 			int BaseId = DateTime.Now.Year*10000 + (DateTime.Now.Month - 1)*100;
 			for (int i = BaseId+1; i < BaseId+31; i++)
 			{
-				TimeCard newTimeCard = await DeserializeTimeCard(i);
+				TimeCard newTimeCard =  DeserializeTimeCard(i);
 				if (newTimeCard != null)
 				{
 					timeCards.Add(newTimeCard);
@@ -126,12 +206,26 @@ namespace ProjectWatch.Data.DataRepositories
 			}
 			return timeCards;
 		}
-		public async Task<IEnumerable<TimeCard>> GetRangeTimeCards(DateTime startDate, DateTime endDate)
+		public async Task<IEnumerable<TimeCard>> GetLastMonthsTimeCardsAsync()
 		{
-			int today = MakeIdFromDate(DateTime.Now);
+			List<TimeCard> timeCards = new List<TimeCard>();
+			int BaseId = DateTime.Now.Year * 10000 + (DateTime.Now.Month - 1) * 100;
+			for (int i = BaseId + 1; i < BaseId + 31; i++)
+			{
+				TimeCard newTimeCard = await DeserializeTimeCardAsync(i);
+				if (newTimeCard != null)
+				{
+					timeCards.Add(newTimeCard);
+				}
+			}
+			return timeCards;
+		}
+		public IEnumerable<TimeCard> GetRangeTimeCards(DateTime startDate, DateTime endDate)
+		{
+			int today = TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
 
-			int startId = MakeIdFromDate(startDate);
-			int endId = MakeIdFromDate(endDate);
+			int startId = TimeCard.MakeTimeCardIdFromDate(startDate);
+			int endId = TimeCard.MakeTimeCardIdFromDate(endDate);
 			if (startId > endId)
 			{
 				int tId = startId;
@@ -142,17 +236,54 @@ namespace ProjectWatch.Data.DataRepositories
 			List<TimeCard> timeCards = new List<TimeCard>();
 			for (int i = startId; i <= endId; i++)
 			{
-				timeCards.Add( await GetAsync(i));
+				TimeCard t = DeserializeTimeCard(i);
+				if (t == null)
+					continue;
+				timeCards.Add(t);
 			}
 			return timeCards;
 		}
-		public async Task<IEnumerable<TimeCard>> GetThisMonthsTimeCards()
+		public async Task<IEnumerable<TimeCard>> GetRangeTimeCardsAsync(DateTime startDate, DateTime endDate)
+		{
+			int today = TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
+
+			int startId = TimeCard.MakeTimeCardIdFromDate(startDate);
+			int endId = TimeCard.MakeTimeCardIdFromDate(endDate);
+			if (startId > endId)
+			{
+				int tId = startId;
+				startId = endId;
+				endId = tId;
+			}
+			endId = (endId > today) ? today : endId;
+			List<TimeCard> timeCards = new List<TimeCard>();
+			for (int i = startId; i <= endId; i++)
+			{
+				timeCards.Add(await GetAsync(i));
+			}
+			return timeCards;
+		}
+		public async Task<IEnumerable<TimeCard>> GetThisMonthsTimeCardsAsync()
 		{
 			List<TimeCard> timeCards = new List<TimeCard>();
 			int BaseId = DateTime.Now.Year * 10000 + DateTime.Now.Month * 100;
 			for (int i = BaseId + 1; i < BaseId + 31; i++)
 			{
-				TimeCard newTimeCard = await DeserializeTimeCard(i);
+				TimeCard newTimeCard = await DeserializeTimeCardAsync(i);
+				if (newTimeCard != null)
+				{
+					timeCards.Add(newTimeCard);
+				}
+			}
+			return timeCards;
+		}
+		public IEnumerable<TimeCard> GetThisMonthsTimeCards()
+		{
+			List<TimeCard> timeCards = new List<TimeCard>();
+			int BaseId = DateTime.Now.Year * 10000 + DateTime.Now.Month * 100;
+			for (int i = BaseId + 1; i < BaseId + 31; i++)
+			{
+				TimeCard newTimeCard = DeserializeTimeCard(i);
 				if (newTimeCard != null)
 				{
 					timeCards.Add(newTimeCard);
@@ -162,24 +293,113 @@ namespace ProjectWatch.Data.DataRepositories
 		}
 		public TimeCard GetTodaysTimeCard()
 		{
-			return DeserializeTimeCard(MakeIdFromDate(DateTime.Now)).Result;
+			List<TimeCard> timeCards;
+			TimeCard _timeCard = new TimeCard();
+			int id = TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
+			if (TargetEntitySet == null)
+				return null;
+			if (TargetEntitySet.EntitySet == null)
+			{
+				TargetEntitySet.EntitySet = new List<TimeCard>();
+			}
+			List<TimeCard> _timeCards = TargetEntitySet.EntitySet as List<TimeCard>;
+			int indx = _timeCards.FindIndex(i => i.EntityId == id);
+			if (indx > -1)
+			{
+				return _timeCards[indx];
+			}
+			else
+			{
+				_timeCard =  DeserializeTimeCard(id);
+				_timeCards.Add(_timeCard);
+			}
+			return _timeCard;
 		}
+
+		public TimeCard GetOrCreateTodaysTimeCard()
+		{
+			List<TimeCard> timeCards;
+			TimeCard _timeCard = new TimeCard();
+			int id = TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
+			if (TargetEntitySet == null)
+				return null;
+			if (TargetEntitySet.EntitySet == null)
+			{
+				TargetEntitySet.EntitySet = new List<TimeCard>();
+			}
+			List<TimeCard> _timeCards = TargetEntitySet.EntitySet as List<TimeCard>;
+			int indx = _timeCards.FindIndex(i => i.EntityId == id);
+			if (indx > -1)
+			{
+				return _timeCards[indx];
+			}
+			else
+			{
+				_timeCard = DeserializeTimeCard(id);
+				if (_timeCard == null)
+				{
+					_timeCard = TimeCard.CreateTimeCard(id);
+					_timeCard = Add(_timeCard);
+				}
+				else
+				{
+					_timeCards.Add(_timeCard);
+				}
+			}
+			return _timeCard;
+		}
+
 		#endregion
 
 		#region Methods
 
-		private async Task<TimeCard> DeserializeTimeCard(int id)
+		private TimeCard DeserializeTimeCard(int id)
 		{
-			string jString = await JsonFileSupport.JsonReadFileAsync(MakePathFromId(id));
-			if (jString == null)
-				return null;
-			return JsonConvert.DeserializeObject<TimeCard>(jString);
+			TimeCard retTimeCard = TimeCardFromCache(id);
+			if (retTimeCard == null)
+			{
+				string jString = JsonFileSupport.JsonReadFile(MakePathFromId(id));
+				if (jString == string.Empty)
+				{
+					return null;
+				}
+				retTimeCard = JsonConvert.DeserializeObject<TimeCard>(jString);
+			}
+			return retTimeCard;
 		}
 
-		int MakeIdFromDate(DateTime date)
+		TimeCard TimeCardFromCache(int id )
 		{
-			return date.Year * 10000 + date.Month * 100 + date.Day;
+			if (TargetEntitySet.EntitySet == null)
+			{
+				TargetEntitySet.EntitySet = new List<TimeCard>();
+			}
+			List<TimeCard> _timeCards = TargetEntitySet.EntitySet as List<TimeCard>;
+			int indx = _timeCards.FindIndex(i => i.EntityId == id);
+			if (indx > -1)
+			{
+				return _timeCards[indx];
+			}
+			else
+			{
+				return null;
+			}
 
+		}
+		private async Task<TimeCard> DeserializeTimeCardAsync(int id)
+		{
+			TimeCard retTimeCard = TimeCardFromCache(id);
+			if (retTimeCard == null)
+			{
+
+				string jString = await JsonFileSupport.JsonReadFileAsync(MakePathFromId(id));
+				if (jString == string.Empty)
+				{
+					return null;
+				}
+				retTimeCard = JsonConvert.DeserializeObject<TimeCard>(jString);
+			}
+			return retTimeCard;
 		}
 		private string MakePathFromId(int id)
 		{

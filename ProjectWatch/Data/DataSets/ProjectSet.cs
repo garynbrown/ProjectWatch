@@ -13,23 +13,25 @@ namespace ProjectWatch.Data.DataSets
 {
 	[Export(typeof(EntitySetBase<Project>))]
 	[PartCreationPolicy(CreationPolicy.NonShared)]
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public class ProjectSet : EntitySetBase<Project>, IEntitySet<Project>
 	{
+		#region Constructors
 		public ProjectSet()
 		{
 			IsDirty = false;
 		}
+		#endregion
+		#region Overrides
 		public override IEnumerable<Project> GetEntitySet<Project>()
 		{
 			return null;
+			EntitySet = new List<Entities.Project>();
 		}
 
+		[JsonIgnore]
 		public override string PathName => "Project";
-
-		//public override  EntitySetBase<Project> DeserializeSet(string JsonString)
-		//{
-		//	return  JsonConvert.DeserializeObject<ProjectSet>(JsonString);
-		//}
+		#endregion
 
 	}
 }

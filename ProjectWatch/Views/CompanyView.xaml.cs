@@ -11,13 +11,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Core.Common.UI;
 
 namespace ProjectWatch.Views
 {
 	/// <summary>
 	/// Interaction logic for CompanyView.xaml
 	/// </summary>
-	public partial class CompanyView : Window
+	public partial class CompanyView : UserControlViewBase
 	{
 		public CompanyView()
 		{

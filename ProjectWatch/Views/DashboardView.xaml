@@ -62,8 +62,8 @@
             <!--<Button x:Name="StartButton" Background="LimeGreen" Command="{Binding StartCommand}" VerticalAlignment="Top" Margin="12,10,0,0"  Content="{Binding StartButtonContent}" HorizontalAlignment="Left" Width="75" />
         <Button x:Name="StopButton" Background="Firebrick"  Command="{Binding StopCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,38,0,0"  Content="Stop" Width="75" />
         <Button x:Name="Break" Background="Gold"  Command="{Binding PauseCommand}"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,65,0,0"  Content="Break" Width="75" />-->
-            <ComboBox x:Name="ProjectComboBox" ItemsSource="{Binding Projects}" HorizontalAlignment="Left" Margin="31.3,28.62,0,0" VerticalAlignment="Top" Width="137" d:LayoutOverrides="VerticalAlignment"/>
-            <ComboBox x:Name="PhaseCombox" HorizontalAlignment="Left" Margin="31.3,76.54,0,0" VerticalAlignment="Top" Width="137"/>
+            <ComboBox x:Name="ProjectComboBox" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" HorizontalAlignment="Left" Margin="31.3,28.62,0,0" VerticalAlignment="Top" Width="137" d:LayoutOverrides="VerticalAlignment"/>
+            <ComboBox x:Name="PhaseCombox" ItemsSource="{Binding Phases}" SelectedItem="{Binding SelectedPhase}" HorizontalAlignment="Left" Margin="31.3,76.54,0,0" VerticalAlignment="Top" Width="137"/>
             <TextBlock x:Name="ProjectTextBlock" Margin="84.07,7.66,79.213,0" TextWrapping="Wrap" Text="Project" VerticalAlignment="Top" d:LayoutOverrides="Width"/>
             <TextBlock x:Name="PhaseTextBlock" Margin="87.3,55.58,81.713,0" TextWrapping="Wrap" Text="Phase" VerticalAlignment="Top" RenderTransformOrigin="0.677,-3.473" d:LayoutOverrides="Width"/>
         </Grid>

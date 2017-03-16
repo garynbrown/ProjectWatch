@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.Serialization;
 using Core.Common.Contracts;
 using Core.Common.Core;
+using Newtonsoft.Json;
 
 namespace ProjectWatch.Entities
 {
 //	OnPropertyChanged(() => _billingId);
 	[DataContract]
-	public class Phase : ClientEntityBase, IIdentifiableEntity
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
+	public class Phase : ClientEntityBase, IIdentifiableEntity, ICloneable
 	{
 		#region Factory Method
 
@@ -23,23 +26,34 @@ namespace ProjectWatch.Entities
 		/// <param name="project_ID">Initial value of the Project_ID property.</param>
 		/// <param name="phaseName">Initial value of the PhaseName property.</param>
 		/// <param name="billable">Initial value of the Billable property.</param>
-		public static Phase CreatePhase(int phaseId, int projectId, string phaseName, bool billable)
-		{
-			Phase phase = new Phase( phaseId,  projectId,  phaseName,  billable);
-			return phase;
-		}
+		//public static Phase CreatePhase(int phaseId, int projectId, string phaseName, bool billable)
+		//{
+		//	Phase phase = new Phase( phaseId,  projectId,  phaseName,  billable);
+		//	return phase;
+		//}
 
-		public Phase(int phaseId, int projectId, string phaseName, bool billable)
-		{
-			_phaseId = phaseId;
-			_projectId = projectId;
-			_phaseName = phaseName;
-			Billable = billable;
-		}
+		//public Phase(int phaseId, int projectId, string phaseName, bool billable)
+		//{
+		//	_phaseId = phaseId;
+		//	_projectId = projectId;
+		//	_phaseName = phaseName;
+		//	Billable = billable;
+		//}
 
 		public Phase()
 		{
 			
+		}
+
+		public Phase(int projectId) 
+			:this(projectId,-1)
+		{
+		}
+
+		public Phase(int projectId, int phaseId)
+		{
+			_projectId = projectId;
+			_phaseId = phaseId;
 		}
 		#endregion
 
@@ -208,11 +222,17 @@ namespace ProjectWatch.Entities
 				RaisePropertyChanged(() => Note);
 			}
 		}
+		[DataMember]
+		public int BillingContactId { get; set; }
+
+		[DataMember]
+		public int ManagementContactId { get; set; }
 		private string _note;
 
 		#endregion
 
 		#region Contract_Implementations
+		[JsonIgnore]
 		public override int EntityId
 		{
 			get { return PhaseId; }
@@ -220,5 +240,27 @@ namespace ProjectWatch.Entities
 		}
 		#endregion
 
+		public object Clone()
+		{
+			Phase p = new Phase();
+			p.Billable = _billable;
+			p.DueDate = _dueDate;
+			p.HourQuote = _hourQuote;
+			p.Note = _note;
+			p.PhaseId = _phaseId;
+			p.PhaseName = _phaseName;
+			p.ProjectId = _projectId;
+			p.Rate = _rate;
+			p.TimeQuote = _timeQuote;
+			p.BillingContactId = BillingContactId;
+			p.ManagementContactId = ManagementContactId;
+
+			return p;
+		}
+
+		public override string ToString()
+		{
+			return _phaseName;
+		}
 	}
 }

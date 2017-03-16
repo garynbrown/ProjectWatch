@@ -13,6 +13,7 @@ using Core.Common.Contracts;
 namespace ProjectWatch.Entities
 {
 	[DataContract]
+	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public class Billing : ClientEntityBase, IIdentifiableEntity
 	{
 		#region Factory Method
@@ -45,9 +46,8 @@ namespace ProjectWatch.Entities
 		/// No Metadata Documentation available.
 		/// </summary>
 		//[EdmScalarPropertyAttribute(EntityKeyProperty = true, IsNullable = false)]
-		[JsonProperty("BillingId")]
 		[DataMember]
-		public int BillingID
+		public int BillingId
 		{
 			get
 			{
@@ -58,7 +58,7 @@ namespace ProjectWatch.Entities
 				if (_billingId != value)
 				{
 					_billingId = value;
-					RaisePropertyChanged(() => BillingID);
+					RaisePropertyChanged(() => BillingId);
 				}
 			}
 		}
@@ -175,19 +175,21 @@ namespace ProjectWatch.Entities
 			}
 		}
 
+		[JsonIgnore]
 		public override int EntityId
 		{
 			get
 			{
-				return BillingID;
+				return BillingId;
 			}
 
 			set
 			{
-				BillingID = value;
+				BillingId = value;
 			}
 		}
 
+		[JsonIgnore]
 		public string PathName  => "Billing";
 
 
