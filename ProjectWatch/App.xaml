@@ -65,8 +65,8 @@
             <DataTemplate DataType="{x:Type viewModel:PhaseEditViewModel}">
                 <views:PhaseEditView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:ReportsViewModel}">
-                <views:ReportsView/>
+            <DataTemplate DataType="{x:Type viewModel:ReportMainViewModel}">
+                <views:ReportMainView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:TimecardViewModel}">
                 <views:TimecardView/>
@@ -91,6 +91,15 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:TimecardEditViewModel}">
                 <views:TimecardEditView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:BillingViewModel}">
+                <views:BillingView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:BillingMainViewModel}">
+                <views:BillingMainView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:BillingEditViewModel}">
+                <views:BillingEditView/>
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

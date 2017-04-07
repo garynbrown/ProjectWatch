@@ -12,20 +12,20 @@
 
         <Button x:Name="Exit" Content="Exit" Command="{Binding DataContext.ProjectViewCommand, RelativeSource={RelativeSource AncestorType=local:ProjectMainView}}" HorizontalAlignment="Left" Margin="219,419,0,0" VerticalAlignment="Top" Width="75" TabIndex="8"/>
         <Button x:Name="Save" Content="Save" Command="{Binding SaveCommand}" HorizontalAlignment="Left" Margin="69,419,0,0" VerticalAlignment="Top" Width="75" TabIndex="7"/>
-        <TextBox x:Name="PhaseName" HorizontalAlignment="Left" Height="23" Margin="10,69,0,0" TextWrapping="Wrap" Text="{Binding PhaseName}" VerticalAlignment="Top" Width="120" TabIndex="1"/>
+        <TextBox x:Name="PhaseName" HorizontalAlignment="Left" Height="23" Margin="10,69,0,0" TextWrapping="Wrap" Text="{Binding PhaseName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120" TabIndex="1"/>
         <TextBlock x:Name="PhaseNametextBlock" HorizontalAlignment="Left" Margin="32,48,0,0" TextWrapping="Wrap" Text="Phase Name" VerticalAlignment="Top"/>
         <TextBlock x:Name="ProjectName" HorizontalAlignment="Left" Height="23" Margin="308,69,0,0" TextWrapping="Wrap" Text="{Binding ProjectName}" VerticalAlignment="Top" Width="184"/>
         <TextBlock x:Name="ProjectNametextBlock" HorizontalAlignment="Left" Margin="330,48,0,0" TextWrapping="Wrap" Text="Project Name" VerticalAlignment="Top"/>
-        <TextBox x:Name="Discription" HorizontalAlignment="Left" Height="73" Margin="10,137,0,0" TextWrapping="Wrap" Text="{Binding Note}" VerticalAlignment="Top" Width="260" TabIndex="2"/>
+        <TextBox x:Name="Discription" HorizontalAlignment="Left" Height="73" Margin="10,137,0,0" TextWrapping="Wrap" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="260" TabIndex="2"/>
         <TextBlock x:Name="DescriptiontextBlock" HorizontalAlignment="Left" Margin="32,116,0,0" TextWrapping="Wrap" Text="Description" VerticalAlignment="Top"/>
         <CheckBox x:Name="IsBillableCheckBox" Content="Is Billable" HorizontalAlignment="Left" Margin="32,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Billable}" TabIndex="4"/>
-        <TextBox x:Name="Rate" HorizontalAlignment="Left" Height="23" Margin="159,261,0,0" TextWrapping="Wrap" Text="{Binding Rate}" VerticalAlignment="Top" Width="66" TabIndex="5"/>
+        <TextBox x:Name="Rate" HorizontalAlignment="Left" Height="23" Margin="159,261,0,0" TextWrapping="Wrap" IsEnabled="{Binding Billable}" Text="{Binding Rate, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="66" TabIndex="5"/>
         <TextBlock x:Name="RatetextBlock" HorizontalAlignment="Left" Margin="164,240,0,0" TextWrapping="Wrap" Text="Billing Rate" VerticalAlignment="Top"/>
         <TextBlock  HorizontalAlignment="Left" Margin="148,264,0,0" TextWrapping="Wrap" Text="$" VerticalAlignment="Top"/>
         <TextBlock  HorizontalAlignment="Left" Margin="234,264,0,0" TextWrapping="Wrap" Text="Per Hour" VerticalAlignment="Top"/>
         <TextBlock  HorizontalAlignment="Left" Margin="342,121,0,0" TextWrapping="Wrap" Text="Due Date" VerticalAlignment="Top"/>
         <DatePicker HorizontalAlignment="Left" Text="{Binding DueDate, Mode=TwoWay}"  Margin="330,145,0,0" VerticalAlignment="Top" TabIndex="3"/>
-        <TextBox x:Name="TimeQuote" HorizontalAlignment="Left" Height="23" Margin="320,259,0,0" TextWrapping="Wrap" Text="{Binding TimeQuote}" VerticalAlignment="Top" Width="120" TabIndex="6"/>
+        <TextBox x:Name="TimeQuote" HorizontalAlignment="Left" Height="23" Margin="320,259,0,0" TextWrapping="Wrap" Text="{Binding TimeQuote, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120" TabIndex="6"/>
         <TextBlock x:Name="TimeQuoteTextBlock" HorizontalAlignment="Left" Margin="342,238,0,0" TextWrapping="Wrap" Text="Time Quote" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

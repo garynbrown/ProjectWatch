@@ -16,6 +16,7 @@ namespace ProjectWatch.ViewModel
 		Company _companyUnderEdit = new Company();
 		private string _companyName;
 		private CompanyMainViewModel companyMainViewModel;
+		private string _note;
 
 		public CompanyEditViewModel() : this(new Company(-1))
 		{
@@ -24,7 +25,7 @@ namespace ProjectWatch.ViewModel
 		public CompanyEditViewModel(Company company)
 		{
 			_companyUnderEdit = company.Clone() as Company;
-			SaveCommand  = new RelayCommand(OnSave);
+			SaveCommand  = new RelayCommand(OnSave, CanSave);
 		}
 
 		public string CompanyName
@@ -40,10 +41,29 @@ namespace ProjectWatch.ViewModel
 				{
 					_companyUnderEdit.MakeDirty();
 					_companyUnderEdit.CompanyName = _companyName;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
 
+		public string Note
+		{
+			get { return _note; }
+			set
+			{
+				if (Set(() => Note, ref _note, value, false))
+				{
+					_companyUnderEdit.MakeDirty();
+					_companyUnderEdit.Note = _note;
+					SaveCommand.RaiseCanExecuteChanged();
+				}
+			}
+		}
+
+		bool CanSave()
+		{
+			return _companyUnderEdit.IsDirty && !string.IsNullOrEmpty(_companyName);
+		}
 		public RelayCommand SaveCommand { get; set; }
 
 		void OnSave()
@@ -54,10 +74,14 @@ namespace ProjectWatch.ViewModel
 			}
 			else
 			{
+
 				companyMainViewModel.companyRepository.Update(_companyUnderEdit);
 			}
-			companyMainViewModel.CompanyMainCompanies = new ObservableCollection<Company>(companyMainViewModel.companyRepository.Get().EntitySet);
+			_companyUnderEdit.CleanAll();
+			companyMainViewModel.CompanyMainCompanies = companyMainViewModel.companyRepository.Get().EntitySet.ToList();
 		}
+
+		//private MainViewModel _mainViewModel;
 		protected override void OnViewLoaded()
 		{
 			companyMainViewModel = ClientEntityBase.Container.GetExportedValue<CompanyMainViewModel>();

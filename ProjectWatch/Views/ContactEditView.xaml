@@ -13,15 +13,15 @@
         <Button x:Name="Exit" Content="Exit" Command="{Binding DataContext.CompanyViewCommand, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}" HorizontalAlignment="Left" Margin="217,430,0,0" VerticalAlignment="Top" Width="75"/>
         <TextBlock  HorizontalAlignment="Left" Margin="217,10,0,0" TextWrapping="Wrap" Text="Employee Maintainence" VerticalAlignment="Top"/>
         <TextBlock  HorizontalAlignment="Left" Margin="29,62,0,0" TextWrapping="Wrap" Text="First Name" VerticalAlignment="Top"/>
-        <TextBox x:Name="FirstName" HorizontalAlignment="Left" Height="23" Margin="103,59,0,0" TextWrapping="Wrap" Text="{Binding FirstName}" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="FirstName" HorizontalAlignment="Left" Height="23" Margin="103,59,0,0" TextWrapping="Wrap" Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
         <TextBlock  HorizontalAlignment="Left" Margin="263,62,0,0" TextWrapping="Wrap" Text="Last Name" VerticalAlignment="Top"/>
-        <TextBox x:Name="LastName" HorizontalAlignment="Left" Height="23" Margin="337,59,0,0" TextWrapping="Wrap" Text="{Binding LastName}" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="LastName" HorizontalAlignment="Left" Height="23" Margin="337,59,0,0" TextWrapping="Wrap" Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
         <TextBlock  HorizontalAlignment="Left" Margin="29,102,0,0" TextWrapping="Wrap" Text="Email" VerticalAlignment="Top"/>
-        <TextBox x:Name="Email" HorizontalAlignment="Left" Height="23" Margin="103,99,0,0" TextWrapping="Wrap" Text="{Binding Email}" VerticalAlignment="Top" Width="271"/>
+        <TextBox x:Name="Email" HorizontalAlignment="Left" Height="23" Margin="103,99,0,0" TextWrapping="Wrap" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="271"/>
         <TextBlock  HorizontalAlignment="Left" Margin="29,132,0,0" TextWrapping="Wrap" Text="Office Phone" VerticalAlignment="Top"/>
-        <TextBox x:Name="Phone1" HorizontalAlignment="Left" Height="23" Margin="103,129,0,0" TextWrapping="Wrap" Text="{Binding Phone1}" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="Phone1" HorizontalAlignment="Left" Height="23" Margin="103,129,0,0" TextWrapping="Wrap" Text="{Binding Phone1, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
         <TextBlock  HorizontalAlignment="Left" Margin="29,162,0,0" TextWrapping="Wrap" Text="Mobile Phone" VerticalAlignment="Top"/>
-        <TextBox x:Name="Phone2" HorizontalAlignment="Left" Height="23" Margin="103,159,0,0" TextWrapping="Wrap" Text="{Binding Phone2}" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="Phone2" HorizontalAlignment="Left" Height="23" Margin="103,159,0,0" TextWrapping="Wrap" Text="{Binding Phone2, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
         <TextBlock  HorizontalAlignment="Left" Margin="29,192,0,0" TextWrapping="Wrap" Text="Street 1" VerticalAlignment="Top"/>
         <TextBox x:Name="Stree1" HorizontalAlignment="Left" Height="23" Margin="103,189,0,0" TextWrapping="Wrap" Text="{Binding Street1}" VerticalAlignment="Top" Width="120"/>
         <TextBlock  HorizontalAlignment="Left" Margin="29,222,0,0" TextWrapping="Wrap" Text="Street 2" VerticalAlignment="Top"/>
@@ -33,7 +33,7 @@
         <TextBlock  HorizontalAlignment="Left" Margin="401,255,0,0" TextWrapping="Wrap" Text="Zip" VerticalAlignment="Top"/>
         <TextBox x:Name="Zip" HorizontalAlignment="Left" Height="23" Margin="433,249,0,0" TextWrapping="Wrap" Text="{Binding Zip}" VerticalAlignment="Top" Width="75"/>
         <TextBlock  HorizontalAlignment="Left" Margin="29,283,0,0" TextWrapping="Wrap" Text="Note" VerticalAlignment="Top"/>
-        <TextBox x:Name="Note" HorizontalAlignment="Left" Height="92" Margin="103,280,0,0" TextWrapping="Wrap" Text="{Binding Note}" VerticalAlignment="Top" Width="354"/>
+        <TextBox x:Name="Note" HorizontalAlignment="Left" Height="92" Margin="103,280,0,0" TextWrapping="Wrap" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="354"/>
     </Grid>
 </Core:UserControlViewBase>
 

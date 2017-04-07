@@ -22,21 +22,24 @@ namespace ProjectWatch.ViewModel
 		private string _totalEmployees;
 		//protected ICompanyRepository companyRepository;
 		//protected IContactRepository contactRepository;
-		//protected ObservableCollection<Company> companies;
+		protected List<Company> _companies;
 		//protected ObservableCollection<Contact> employees;
-		private List<Company> CompanyList = new List<Company>();
+//		private List<Company> CompanyList = new List<Company>();
 		private List<Contact> _employees = new List<Contact>();
 		private Company _selectedCompany;
 		private Contact _selectedContact;
 		private CompanyMainViewModel _companyMain;
+		private MainViewModel _mainViewModel;
 		private bool _canAddEmployee;
 		private string _companyToAdd;
 		private bool _canAddCompany;
 		private string _contactName;
+		private string _note;
 
 		public CompanyViewModel()
 		{
 			DeleteCompanyCommand = new RelayCommand<Company>(OnDeleteCompany);
+			DeleteEmployeeCommand = new RelayCommand<Contact>(OnDeleteEmployee);
 			_canAddEmployee = false;
 			_canAddCompany = false;
 			//companyRepository = ClientEntityBase.Container.GetExportedValue<CompanyRepository>();
@@ -47,13 +50,27 @@ namespace ProjectWatch.ViewModel
 
 		public void OnDeleteCompany(Company company)
 		{
+			List<Contact> _localContacts = _companyMain.CompanyMainEmployees.FindAll(e => e.CompanyId == company.CompanyId);
+			foreach (Contact _employee in _localContacts)
+			{
+				_companyMain.contactRepository.Remove(_employee);
+			}
+			_companyMain.companyRepository.Remove(company);
+			_companies.Remove(company);
+			Companies = new List<Company>(_companies);
+			SelectedCompany = null;
 			// todo Add an Archive bool to the entity classes, so that the entity is not removed from the persisted set, but not shown
 			// todo delte form company list and observable collection and serialize set
 		}
 
 		public RelayCommand<Contact> DeleteEmployeeCommand { get; set; }
+
 		void OnDeleteEmployee(Contact contact)
-		{ }
+		{
+			_employees.Remove(contact);
+			_companyMain.contactRepository.Remove(contact);
+			Employees = new List<Contact>(_employees); 
+		}
 		public override string ViewTitle
 		{
 			get { return "Company"; }
@@ -77,29 +94,22 @@ namespace ProjectWatch.ViewModel
 			}
 		}
 
-		public string CompanyToAdd
-		{
-			get { return _companyToAdd; }
-			set {
-				if ( Set(() => CompanyToAdd, ref _companyToAdd, value, false))
-				{
-					CanAddCompany = !(string.IsNullOrEmpty(_companyToAdd) && string.IsNullOrWhiteSpace(_companyToAdd));
-				}
-			}
-		}
-
-		//public ObservableCollection<Company> Companies
+		//public string CompanyToAdd
 		//{
-		//	get { return _companies; }
-		//	private set
-		//	{
-		//		if (Set(() => Companies, ref _companies, value, false))
+		//	get { return _companyToAdd; }
+		//	set {
+		//		if ( Set(() => CompanyToAdd, ref _companyToAdd, value, false))
 		//		{
-		//			CompanyList = _companies.ToList();
+		//			CanAddCompany = !(string.IsNullOrEmpty(_companyToAdd) && string.IsNullOrWhiteSpace(_companyToAdd));
 		//		}
-
 		//	}
 		//}
+
+		public List<Company> Companies
+		{
+			get { return _companies; }
+			private set { Set(() => Companies, ref _companies, value, false); }
+		}
 
 		public List<Contact> Employees
 		{
@@ -108,7 +118,7 @@ namespace ProjectWatch.ViewModel
 			{
 				if (Set(() => Employees, ref _employees, value, false))
 				{
-					Employees = _employees;
+					//Employees = _employees;
 					TotalEmployees = _employees.Count.ToString();
 				}
 			}
@@ -124,9 +134,17 @@ namespace ProjectWatch.ViewModel
 				if (Set(() => SelectedCompany, ref _selectedCompany, value, false))
 				{
 					CompanyName = _selectedCompany.CompanyName;
-					Employees = _companyMain.CompanyMainEmployees.ToList().FindAll(e => e.CompanyId == SelectedCompany.CompanyId);
+					Employees = _companyMain.CompanyMainEmployees.FindAll(e => e.CompanyId == SelectedCompany.CompanyId);
+					Note = _selectedCompany.Note;
+					TotalEmployees = Employees.Count.ToString();
 				}
 			}
+		}
+
+		public string Note
+		{
+			get { return _note; }
+			set { Set(() => Note, ref _note, value, false); }
 		}
 
 		public Contact SelectedContact
@@ -141,11 +159,11 @@ namespace ProjectWatch.ViewModel
 			}
 		}
 
-		public bool CanAddCompany
-		{
-			get { return _canAddCompany; }
-			set { Set(() => CanAddCompany, ref _canAddCompany, value,false); }
-		}
+		//public bool CanAddCompany
+		//{
+		//	get { return _canAddCompany; }
+		//	set { Set(() => CanAddCompany, ref _canAddCompany, value,false); }
+		//}
 
 		public bool CanAddEmployee
 		{
@@ -157,14 +175,15 @@ namespace ProjectWatch.ViewModel
 		{
 			get
 			{
-				_totalEmployees = _employees?.Count.ToString() ?? "0";
 				return _totalEmployees;
 			}
-			private set { _totalEmployees = value; }
+			private set { Set(() => TotalEmployees, ref _totalEmployees, value, false); }
 		}
 		protected override void OnViewLoaded()
 		{
+			//_mainViewModel = ClientEntityBase.Container.GetExportedValue<MainViewModel>();
 			_companyMain = ClientEntityBase.Container.GetExportedValue<CompanyMainViewModel>();
+			Companies = _companyMain.companyRepository.Get().EntitySet.ToList();
 
 		}
 	}

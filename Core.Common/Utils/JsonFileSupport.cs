@@ -13,7 +13,11 @@ namespace Core.Common.Utils
 {
 	public static class JsonFileSupport
 	{
+#if DEBUG
+		public static readonly string DataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"ProjectWatch\Test\Data");
+#else
 		public static readonly string DataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"ProjectWatch\Data");
+#endif
 		public static string JsonSerializeSetOfType<T>(T entitySetModel)
 		{
 			return JsonConvert.SerializeObject(entitySetModel, Formatting.Indented);

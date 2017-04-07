@@ -14,7 +14,7 @@ namespace ProjectWatch.Entities
 {
 	[DataContract]
 	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
-	public class Billing : ClientEntityBase, IIdentifiableEntity
+	public class Billing : ClientEntityBase, IIdentifiableEntity, ICloneable
 	{
 		#region Factory Method
 
@@ -32,7 +32,7 @@ namespace ProjectWatch.Entities
 		}
 		public Billing()
 		{
-
+			BillingId = -1;
 		}
 		public Billing(int billingId, int projectId)
 		{
@@ -158,6 +158,17 @@ namespace ProjectWatch.Entities
 		}
 		private double _hoursBilled;
 
+		[DataMember]
+		public string FileLocation { get; set; }
+		[DataMember]
+		public bool PhaseDetail { get; set; }
+		[DataMember]
+		public bool ByCompany { get; set; }
+		[DataMember]
+		public DateTime FromDate { get; set; }
+
+		[DataMember]
+		public DateTime ToDate { get; set; }
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
@@ -197,6 +208,24 @@ namespace ProjectWatch.Entities
 
 		#endregion
 
+		public object Clone()
+		{
+			Billing b = new Billing();
 
+			b.AmountBilled = AmountBilled;
+			b.PhaseDetail = PhaseDetail;
+			b.ByCompany = ByCompany;
+			b.FileLocation = FileLocation;
+			b.BillingId = BillingId;
+			b.DateBilled = DateBilled;
+			b.Hours_Billed = Hours_Billed;
+			b.FromDate = FromDate;
+			b.ToDate = ToDate;
+			b.Note = Note;
+			b.PhaseId = PhaseId;
+			b.ProjectId = ProjectId;
+
+			return b;
+		}
 	}
 }

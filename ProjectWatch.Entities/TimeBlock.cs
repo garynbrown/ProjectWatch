@@ -15,7 +15,7 @@ namespace ProjectWatch.Entities
 {
 	[DataContract]
 	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
-	public class TimeBlock: ObservableObject, ICloneable
+	public class TimeBlock: ClientEntityBase, ICloneable
 	{
 		private const int WorkBlockType = 1;
 		const int BreakBlockType = 0;
@@ -58,11 +58,20 @@ namespace ProjectWatch.Entities
 		/// <param name="timeBlockType"></param>
 		/// <param name="startTime"></param>
 		/// <param name="stopTime"></param>
-		public TimeBlock( DateTime startTime, DateTime endTime, int timeBlockType = WorkBlockType)
+		public TimeBlock( DateTime startTime, DateTime endTime, TimeType timeBlockType = TimeType.Task)
 		{
 			this.TimeBlockType = timeBlockType;
 			this.StartTime = startTime;
 			this.EndTime = endTime;
+			ProjectId = -1;
+			PhaseId = -1;
+		}
+
+		public TimeBlock()
+		{
+			ProjectId = -1;
+			PhaseId = -1;
+
 		}
 		#endregion
 		#region Properties
@@ -85,12 +94,14 @@ namespace ProjectWatch.Entities
 			set { _hoursOnTask = value; }
 		}
 
+		public int BillingId { get; set; }
 		public string Note
 		{
 			get { return _note; }
 			set { _note = value; }
 		}
-
+		[DataMember]
+		public bool IsBilled { get; set; }
 		[DataMember]
 		public int PhaseId
 		{
@@ -120,13 +131,13 @@ namespace ProjectWatch.Entities
 			{ Set(() => StartTime, ref _startTime, value); }
 		}
 		[DataMember]
-		public int TimeBlockType { get; set; }
+		public TimeType TimeBlockType { get; set; }
 		#endregion
 
 		#region Overrides
 		public override string ToString()
 		{
-			string blockType = TimeBlockType == WorkBlockType ? "Work" : "Break";
+			string blockType = TimeBlockType == TimeType.Task ? "Work" : "Break";
 			return $" {blockType} started at {StartTime} and ended at {EndTime}";
 		}
 		#endregion
@@ -139,7 +150,14 @@ namespace ProjectWatch.Entities
 			t.PhaseId = PhaseId;
 			t.ProjectId = ProjectId;
 			t.Note = Note;
+			t.IsBilled = IsBilled;
 			return t;
+		}
+
+		public override int EntityId
+		{
+			get { return  (int)StartTime.TimeOfDay.TotalSeconds; }
+			set {  }
 		}
 	}
 }

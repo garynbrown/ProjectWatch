@@ -52,8 +52,8 @@ namespace ProjectWatch.Entities
 
 		public Phase(int projectId, int phaseId)
 		{
-			_projectId = projectId;
-			_phaseId = phaseId;
+			ProjectId = projectId;
+			PhaseId = phaseId;
 		}
 		#endregion
 
@@ -63,171 +63,64 @@ namespace ProjectWatch.Entities
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public int PhaseId
-		{
-			get
-			{
-				return _phaseId;
-			}
-			set
-			{
-				if (_phaseId != value)
-				{
-					_phaseId =(value);
-					RaisePropertyChanged(() => PhaseId);
-				}
-			}
-		}
-		private int _phaseId;
+		public int PhaseId { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public int ProjectId
-		{
-			get
-			{
-				return _projectId;
-			}
-			set
-			{
-				_projectId = value;
-				RaisePropertyChanged(() => ProjectId);
-			}
-		}
-		private int _projectId;
+		public int ProjectId { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public string PhaseName
-		{
-			get
-			{
-				return _phaseName;
-			}
-			set
-			{
-				_phaseName =value;
-				RaisePropertyChanged(() => PhaseName);
-			}
-		}
-		private string _phaseName;
+		public string PhaseName { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public bool Billable
-		{
-			get
-			{
-				return _billable;
-			}
-			set
-			{
-				_billable = value;
-				RaisePropertyChanged(() => Billable);
-			}
-		}
-		private bool _billable;
+		public bool IsBillable { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public DateTime DueDate
-		{
-			get
-			{
-				return _dueDate;
-			}
-			set
-			{
-				_dueDate = value;
-				RaisePropertyChanged(() => DueDate);
-			}
-		}
-		private DateTime _dueDate;
+		public DateTime DueDate { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public double HourQuote
-		{
-			get
-			{
-				return _hourQuote;
-			}
-			set
-			{
-				_hourQuote = value;
-				RaisePropertyChanged(() => HourQuote);
-			}
-		}
-		private double _hourQuote;
+		public double HourQuote { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public double TimeQuote
-		{
-			get
-			{
-				return _timeQuote;
-			}
-			set
-			{
-				_timeQuote = value;
-				RaisePropertyChanged(() => TimeQuote);
-			}
-		}
-		private double _timeQuote;
+		public double TimeQuote { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public double Rate
-		{
-			get
-			{
-				return _rate;
-			}
-			set
-			{
-				_rate = value;
-				RaisePropertyChanged(() => Rate);
-			}
-		}
-		private double _rate;
+		public double Rate { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public string Note
-		{
-			get
-			{
-				return _note;
-			}
-			set
-			{
-				_note = value;
-				RaisePropertyChanged(() => Note);
-			}
-		}
-		[DataMember]
-		public int BillingContactId { get; set; }
+		public string Note { get; set; }
 
-		[DataMember]
-		public int ManagementContactId { get; set; }
-		private string _note;
+		public bool HasChild { get; set; }
+		public bool HasParent { get; set; }
+
+		//[DataMember]
+		//public int BillingContactId { get; set; }
+
+		//[DataMember]
+		//public int ManagementContactId { get; set; }
 
 		#endregion
 
@@ -243,24 +136,26 @@ namespace ProjectWatch.Entities
 		public object Clone()
 		{
 			Phase p = new Phase();
-			p.Billable = _billable;
-			p.DueDate = _dueDate;
-			p.HourQuote = _hourQuote;
-			p.Note = _note;
-			p.PhaseId = _phaseId;
-			p.PhaseName = _phaseName;
-			p.ProjectId = _projectId;
-			p.Rate = _rate;
-			p.TimeQuote = _timeQuote;
-			p.BillingContactId = BillingContactId;
-			p.ManagementContactId = ManagementContactId;
+			p.IsBillable = IsBillable;
+			p.HasChild = HasChild;
+			p.HasParent = HasParent;
+			p.DueDate = DueDate;
+			p.HourQuote = HourQuote;
+			p.Note = Note;
+			p.PhaseId = PhaseId;
+			p.PhaseName = PhaseName;
+			p.ProjectId = ProjectId;
+			p.Rate = Rate;
+			p.TimeQuote = TimeQuote;
+			//p.BillingContactId = BillingContactId;
+			//p.ManagementContactId = ManagementContactId;
 
 			return p;
 		}
 
 		public override string ToString()
 		{
-			return _phaseName;
+			return PhaseName;
 		}
 	}
 }

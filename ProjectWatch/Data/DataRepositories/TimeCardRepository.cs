@@ -17,7 +17,7 @@ using ProjectWatch.Entities;
 namespace ProjectWatch.Data.DataRepositories
 {
 	[Export(typeof(ITimeCardRepository))]
-	[PartCreationPolicy(CreationPolicy.NonShared)]
+	[PartCreationPolicy(CreationPolicy.Shared)]
 	public class TimeCardRepository : DataRepositoryBase<TimeCard>, ITimeCardRepository
 	{
 		#region Constructors
@@ -99,13 +99,72 @@ namespace ProjectWatch.Data.DataRepositories
 
 			return await DeserializeTimeCardAsync(id);
 		}
-		public override async void RemoveAsync(int id)
+		public override  TimeCard Get(int id)
 		{
 			string location = Path.Combine(JsonFileSupport.DataPath, MakePathFromId(id) + ".json");
+			if (!File.Exists(location))
+			{
+				return null;
+			}
+			return  DeserializeTimeCard(id);
+		}
+
+		public override EntitySetBase<TimeCard> Get()
+		{
+			if (TargetEntitySet.EntitySet == null || !TargetEntitySet.EntitySet.Any())
+			{
+				TargetEntitySet.EntitySet = GetDefaultRangeTimeCards();
+			}
+			return TargetEntitySet;
+		}
+		public override async Task< EntitySetBase<TimeCard>> GetAsync()
+		{
+			if (TargetEntitySet.EntitySet == null || !TargetEntitySet.EntitySet.Any())
+			{
+				TargetEntitySet.EntitySet = GetDefaultRangeTimeCards();
+			}
+			return  TargetEntitySet;
+		}
+
+		//public override async void RemoveAsync(int id)
+		//{
+		//	string location = Path.Combine(JsonFileSupport.DataPath, MakePathFromId(id) + ".json");
+		//	if (TargetEntitySet?.EntitySet == null)
+		//		return;
+		//	List<TimeCard> Entities = (TargetEntitySet.EntitySet as List<TimeCard>) ?? new List<TimeCard>();
+		//	int indx = Entities.FindIndex(e => e.EntityId == id);
+		//	if (indx > -1)
+		//	{
+		//		Entities.RemoveAt(indx);
+		//		if (File.Exists(location))
+		//		{
+		//			File.Delete(location);
+		//		}
+		//	}
+		//}
+		public override async void RemoveAsync(TimeCard timeCard)
+		{
+				string location = Path.Combine(JsonFileSupport.DataPath, MakePathFromId(timeCard.TimeId) + ".json");
+				if (TargetEntitySet?.EntitySet == null)
+					return;
+				List<TimeCard> Entities = (TargetEntitySet.EntitySet as List<TimeCard>) ?? new List<TimeCard>();
+				int indx = Entities.FindIndex(e => e.EntityId == timeCard.TimeId);
+				if (indx > -1)
+				{
+					Entities.RemoveAt(indx);
+					if (File.Exists(location))
+					{
+						File.Delete(location);
+					}
+				}
+		}
+		public override  void Remove(TimeCard timeCard)
+		{
+			string location = Path.Combine(JsonFileSupport.DataPath, MakePathFromId(timeCard.TimeId) + ".json");
 			if (TargetEntitySet?.EntitySet == null)
 				return;
 			List<TimeCard> Entities = (TargetEntitySet.EntitySet as List<TimeCard>) ?? new List<TimeCard>();
-			int indx = Entities.FindIndex(e => e.EntityId == id);
+			int indx = Entities.FindIndex(e => e.EntityId == timeCard.TimeId);
 			if (indx > -1)
 			{
 				Entities.RemoveAt(indx);
@@ -114,10 +173,6 @@ namespace ProjectWatch.Data.DataRepositories
 					File.Delete(location);
 				}
 			}
-		}
-		public override async void RemoveAsync(TimeCard timeCard)
-		{
-			RemoveAsync(timeCard.EntityId);
 		}
 		public override async Task<TimeCard> UpdateAsync(TimeCard timeCard)
 		{
@@ -164,12 +219,12 @@ namespace ProjectWatch.Data.DataRepositories
 			return retEntity;
 		}
 
-		protected override void DeserializeEntitySet()
+		protected override void DeserializeEntitySet(bool archive = false)
 		{
 			TargetEntitySet.EntitySet = new List<TimeCard>(GetDefaultRangeTimeCards());
 		}
 
-		protected override async void DeserializeEntitySetAsync()
+		protected override async void DeserializeEntitySetAsync(bool archive = false)
 		{
 			TargetEntitySet.EntitySet = new List<TimeCard>(await GetDefaultRangeTimeCardsAsync());
 		}
@@ -223,6 +278,8 @@ namespace ProjectWatch.Data.DataRepositories
 		public IEnumerable<TimeCard> GetRangeTimeCards(DateTime startDate, DateTime endDate)
 		{
 			int today = TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
+			if (startDate == DateTime.MinValue)
+				startDate = new DateTime(2017,1,1);
 
 			int startId = TimeCard.MakeTimeCardIdFromDate(startDate);
 			int endId = TimeCard.MakeTimeCardIdFromDate(endDate);
@@ -246,7 +303,8 @@ namespace ProjectWatch.Data.DataRepositories
 		public async Task<IEnumerable<TimeCard>> GetRangeTimeCardsAsync(DateTime startDate, DateTime endDate)
 		{
 			int today = TimeCard.MakeTimeCardIdFromDate(DateTime.Now);
-
+			if (startDate == DateTime.MinValue)
+				startDate = new DateTime(2017, 1, 1);
 			int startId = TimeCard.MakeTimeCardIdFromDate(startDate);
 			int endId = TimeCard.MakeTimeCardIdFromDate(endDate);
 			if (startId > endId)

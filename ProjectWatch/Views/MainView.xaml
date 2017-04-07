@@ -2,13 +2,18 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:ProjectWatch.ViewModel"
         xmlns:local="clr-namespace:ProjectWatch.Views"
         xmlns:core="clr-namespace:Core.Common.UI;assembly=Core.Common"
         xmlns:Views="clr-namespace:ProjectWatch.Views"
+        xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
         Height="500" Width="600" >
+    
     <!--d:DesignHeight="200" d:DesignWidth="200" >-->
     <!--<Window.Resources>
         <vm:MainViewModel x:Name="MainViewModel"/>
@@ -20,14 +25,19 @@
     <core:UserControlViewBase.DataContext>
         <vm:MainViewModel />
     </core:UserControlViewBase.DataContext>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Unloaded">
+            <cmd:EventToCommand Command="{Binding ClosingCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
         <TabControl>
+            <TabItem Header="{Binding TimeCardMainViewModel.ViewTitle}" Content="{Binding TimeCardMainViewModel}"/>
             <TabItem Header="{Binding ProjectMainViewModel.ViewTitle}" Content="{Binding ProjectMainViewModel}"/>
             <TabItem Header="{Binding CompanyMainViewModel.ViewTitle}" Content="{Binding CompanyMainViewModel}"/>
-            <TabItem Header="{Binding TimeCardMainViewModel.ViewTitle}" Content="{Binding TimeCardMainViewModel}"/>
-            <TabItem Header="{Binding AdministationViewModel.ViewTitle}" Content="{Binding AdministationViewModel}"/>
-            <TabItem Header="{Binding ReportsViewModel.ViewTitle}" Content="{Binding ReportsViewModel}"/>
-            <TabItem Header="{Binding SettingsViewModel.ViewTitle}" Content="{Binding SettingsViewModel}"/>
+            <TabItem Header="{Binding BillingMainViewModel.ViewTitle}" Content="{Binding BillingMainViewModel}"/>
+            <!--<TabItem Header="{Binding ReportsViewModel.ViewTitle}" Content="{Binding ReportsViewModel}"/>
+            <TabItem Header="{Binding SettingsViewModel.ViewTitle}" Content="{Binding SettingsViewModel}"/>-->
         </TabControl>
     </Grid>
 </core:UserControlViewBase>

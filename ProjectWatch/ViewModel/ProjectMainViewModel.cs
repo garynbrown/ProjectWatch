@@ -71,12 +71,12 @@ namespace ProjectWatch.ViewModel
 		{
 			get { return "Projects"; }
 		}
-		private IProjectRepository projectRepository;
-		private IPhaseRepository phaseRepository;
+		//private IProjectRepository projectRepository;
+		//private IPhaseRepository phaseRepository;
 		private DashboardViewModel dashboardViewModel;
 		//private ProjectMainViewModel projectMainViewModel;
 		//private ObservableCollection<Project> _projectMainProjects;
-		public ObservableCollection<Project> ProjectMainProjects
+		public List<Project> ProjectMainProjects
 		{
 			get { return dashboardViewModel.Projects; }
 			set { dashboardViewModel.Projects = value; }
@@ -84,8 +84,8 @@ namespace ProjectWatch.ViewModel
 
 		protected override void OnViewLoaded()
 		{
-			projectRepository = ClientEntityBase.Container.GetExportedValue<IProjectRepository>();
-			phaseRepository = ClientEntityBase.Container.GetExportedValue<IPhaseRepository>();
+			//projectRepository = ClientEntityBase.Container.GetExportedValue<IProjectRepository>();
+			//phaseRepository = ClientEntityBase.Container.GetExportedValue<IPhaseRepository>();
 			dashboardViewModel = ClientEntityBase.Container.GetExportedValue<DashboardViewModel>();
 			//projectMainViewModel = ClientEntityBase.Container.GetExportedValue<ProjectMainViewModel>();
 			//ProjectMainProjects = dashboardViewModel.Projects;

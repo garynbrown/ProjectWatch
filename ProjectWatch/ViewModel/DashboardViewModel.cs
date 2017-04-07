@@ -41,8 +41,9 @@ namespace ProjectWatch.ViewModel
 		//private string _StartAnim = "InActive";
 		private string _typeOfTime = "Not Started";
 		private string _startButtonContent = "Start";
-		private ObservableCollection<Phase> _phases;
-		private ObservableCollection<Project> _projects;
+		private List<Phase> _allPhases;
+		private List<Phase> _phases = new List<Phase>();
+		private List<Project> _projects = new List<Project>();
 		private Timer _timer;
 		private DateTime workStartTime;
 		private DateTime workStopTime;
@@ -102,6 +103,7 @@ namespace ProjectWatch.ViewModel
 		public ContactSet DashboardContactSet = new ContactSet();
 		public BillingSet DashboardBillingSet = new BillingSet();
 		private TimecardViewModel CurrentTimeCardViewModel;
+		private PreferenceSettings _pSettings;
 
 		public DashboardViewModel()
 		{
@@ -124,7 +126,7 @@ namespace ProjectWatch.ViewModel
 			_timer.Enabled = true;
 			//_breakTimer.Enabled = false;
 			//_workTimer.Enabled = false;
-			ShowPropertiesCommand = new RelayCommand(OnShowProperties);
+			ShowPropertiesCommand = new RelayCommand(OnShowProperties,CanShowProperties);
 //			StartCommand = new RelayCommand(OnStart, OnStartCanExecute);
 			StartCommand = new RelayCommand(OnStart);
 //			StopCommand = new RelayCommand(OnStop, OnStopCanExecute);
@@ -133,9 +135,27 @@ namespace ProjectWatch.ViewModel
 			PauseCommand = new RelayCommand(OnBreak);
 		}
 
+		public bool IsPropertiesShowing
+		{
+			get { return _isPropertiesShowing; }
+			set {
+				if (Set(() => IsPropertiesShowing, ref _isPropertiesShowing, value, false))
+				{
+					ShowPropertiesCommand.RaiseCanExecuteChanged();
+				}
+				 }
+		}
+
+		bool CanShowProperties()
+		{
+			return !IsPropertiesShowing;
+		}
+		public RelayCommand ShowPropertiesCommand { get; set; }
 		private void OnShowProperties()
 		{
 			PropertyWindow TabbedProperties = new PropertyWindow();
+			IsPropertiesShowing = true;
+			ShowPropertiesCommand.RaiseCanExecuteChanged();
 			TabbedProperties.Show();
 		}
 
@@ -146,27 +166,34 @@ namespace ProjectWatch.ViewModel
 
 		protected override void OnViewLoaded()
 		{
-			base.OnViewLoaded();
-			//TimeCardSet timeCardSet = new TimeCardSet();
-			//timeCardSet.EntitySet =	timeCardRepository.GetDefaultRangeTimeCards().ToList();
 			CurrentTimeCard = timeCardRepository.GetOrCreateTodaysTimeCard();
 			DashboardProjectSet.EntitySet =  projectRepository.Get().EntitySet ;
 			DashboardPhaseSet.EntitySet = phaseRepository.Get().EntitySet;
 			DashboardCompanySet.EntitySet = companyRepository.Get().EntitySet;
 			DashboardContactSet.EntitySet = contactRepository.Get().EntitySet;
 			DashboardBillingSet.EntitySet = billingRepository.Get().EntitySet;
-			_projects = new ObservableCollection<Project>(DashboardProjectSet.EntitySet);
-			_phases =  new ObservableCollection<Phase>(DashboardPhaseSet.EntitySet);
-			_companies = new ObservableCollection<Company>(DashboardCompanySet.EntitySet);
-			_contacts = new ObservableCollection<Contact>(DashboardContactSet.EntitySet);
-			_billings = new ObservableCollection<Billing>(DashboardBillingSet.EntitySet);
+			_projects = DashboardProjectSet.EntitySet.ToList();
+			AllPhases =  DashboardPhaseSet.EntitySet.ToList();
+			_companies = DashboardCompanySet.EntitySet.ToList();
+			_contacts = DashboardContactSet.EntitySet.ToList();
+			_billings =DashboardBillingSet.EntitySet.ToList();
+			PreferenceManager.LoadConfiguration(ref _pSettings);
+			if (_pSettings.LastProject > -1)
+			{
+				SelectedProject = _projects.Find(p => p.ProjectId == _pSettings.LastProject);
+				if (_pSettings.LastPhase > -1)
+				{
+					SelectedPhase = _phases.Find(p => p.PhaseId == _pSettings.LastPhase);
+				}
+			}
+			_SumOfWorkComplete = CalculateSumOfWorkBlocks();
 		}
 
-		// Fields...
-		//		private RelayCommand _pauseCommand;
-		//		private RelayCommand _startCommand;
-		//		private RelayCommand _stopCommand;
-		private TimeCard _currentTimeCard;
+	// Fields...
+	//		private RelayCommand _pauseCommand;
+	//		private RelayCommand _startCommand;
+	//		private RelayCommand _stopCommand;
+	private TimeCard _currentTimeCard;
 		private string _hoursWorked = "0:0";
 		//private bool _isStarted = false;
 		//private bool _isStoped = true;
@@ -181,20 +208,18 @@ namespace ProjectWatch.ViewModel
 				bool firstProject = (_selectedProject == null || currentProject.ProjectId == -1);
 				if (Set(() => SelectedProject, ref _selectedProject, value, false))
 				{
-					bool resume = false;
+					//bool resume = false;
 					if (_timerState != State.Stopped && !firstProject)
 					{
 						workStopTime = CurrentTime;
 						CurrentTimeCard.AddWorkBlock(TimeBlock.CreateWorkBlock(workStartTime, workStopTime, currentProject.ProjectId, currentPhase.PhaseId));
 						_SumOfWorkComplete = CalculateSumOfWorkBlocks();
 						workStartTime = CurrentTime;
-						//resume = true;
-						//_timer.Stop();
-						//OnStop();
 					}
 					//currentProject = DashboardProjectSet.EntitySet.ToList().Find(p => p.Name == value);
 					currentProject = _selectedProject;
-					Phases = new ObservableCollection<Phase>( DashboardPhaseSet.EntitySet.ToList().FindAll(p => p.ProjectId == currentProject.ProjectId));
+					_pSettings.LastProject = _selectedProject.ProjectId;
+					Phases =  _allPhases.FindAll(p => p.ProjectId == currentProject.ProjectId);
 					SelectedPhase = null;
 					currentPhase = new Phase(-1);
 					//if (resume)
@@ -251,32 +276,32 @@ namespace ProjectWatch.ViewModel
 		//	}
 		//}
 
-		public ObservableCollection<Company> Companies
+		public List<Company> Companies
 		{
 			get { return _companies; }
 			set { _companies = value; }
 		}
 
-		public ObservableCollection<Contact> Contacts
+		public List<Contact> Contacts
 		{
 			get { return _contacts; }
 			set { _contacts = value; }
 		}
 
-		public ObservableCollection<Billing> Billings
+		public List<Billing> Billings
 		{
 			get { return _billings; }
 			set { _billings = value; }
 		}
 
-		public ObservableCollection<Project> Projects
+		public List<Project> Projects
 		{
 			get { return _projects; }
-			set { _projects = value; }
+			set { Set(() => Projects, ref _projects, value, false); }
 		}
 
 
-		public ObservableCollection<Phase> Phases
+		public List<Phase> Phases
 		{
 			get { return _phases; }
 			set
@@ -305,6 +330,7 @@ namespace ProjectWatch.ViewModel
 						//OnStop();
 					}
 					currentPhase = _selectedPhase;
+					_pSettings.LastPhase = _selectedPhase.PhaseId;
 					//if (resume)
 					//{
 					//	OnStart();
@@ -317,8 +343,10 @@ namespace ProjectWatch.ViewModel
 		TimeSpan CalculateSumOfWorkBlocks()
 		{
 			TimeSpan calculatedTimeSpan = TimeSpan.Zero;
-			foreach (TimeBlock _timeBlock in CurrentTimeCard.WorkBlocks)
+			foreach (TimeBlock _timeBlock in CurrentTimeCard.TimeBlocks)
 			{
+				if (_timeBlock.TimeBlockType == TimeType.Break )
+						continue;
 				calculatedTimeSpan += _timeBlock.GetTimeSpan();
 			}
 			return calculatedTimeSpan;
@@ -334,9 +362,10 @@ namespace ProjectWatch.ViewModel
 		public TimeSpan tempBreakTime = TimeSpan.Zero;
 		private Project _selectedProject;
 		private Phase _selectedPhase;
-		private ObservableCollection<Company> _companies;
-		private ObservableCollection<Contact> _contacts;
-		private ObservableCollection<Billing> _billings;
+		private List<Company> _companies;
+		private List<Contact> _contacts;
+		private List<Billing> _billings;
+		private bool _isPropertiesShowing;
 
 		public string HoursWorked
 		{
@@ -353,7 +382,6 @@ namespace ProjectWatch.ViewModel
 			set { Set(() => StartButtonContent, ref _startButtonContent, value, false); }
 		}
 
-		public RelayCommand ShowPropertiesCommand { get; set; }
 
 		public RelayCommand StopCommand { get; private set; }
 
@@ -361,44 +389,39 @@ namespace ProjectWatch.ViewModel
 
 		void OnStop()
 		{
-			//if (_isOnBreak)
-			//{
-			//	IsOnBreak = false;
-			//	breakStopTime = DateTime.Now;
-			//	CurrentTimeCard.AddBreakBlock(breakStartTime,breakStopTime);
-			//	// stop break timmer and add it to total break time
-			//	// start or restart on task timmer
-			//	IsStarted = false;
-			//	workStartTime = DateTime.Now;
-			//}
-			//else
-			//{
-			//if (_isStarted)
-			//{
-			//	IsStarted = false;
-
-			// stop on task timer and 
-			ValidateModel();
-			if (IsValid)
+			if (_timerState == State.Paused)
 			{
-				workStopTime = CurrentTime;
-				CurrentTimeCard.AddWorkBlock(TimeBlock.CreateWorkBlock(workStartTime, workStopTime, currentProject.ProjectId, currentPhase.PhaseId));
-				_SumOfWorkComplete = CalculateSumOfWorkBlocks();
+				//IsOnBreak = false;
+				breakStopTime = DateTime.Now;
+				CurrentTimeCard.AddBreakBlock(TimeBlock.CreateBreakBlock(breakStartTime, breakStopTime));
 			}
 			else
 			{
-				if (TimeCardCreated != null)
+				ValidateModel();
+				if (IsValid)
 				{
-					//CurrentTimeCardViewModel = new TimecardViewModel(CurrentTimeCard);
-
-					TimeCardCreated(this, new TimeCardEventArgs(CurrentTimeCard, true, true));
+					workStopTime = CurrentTime;
+					CurrentTimeCard.AddWorkBlock(TimeBlock.CreateWorkBlock(workStartTime, workStopTime, currentProject.ProjectId,
+						currentPhase.PhaseId));
+					_SumOfWorkComplete = CalculateSumOfWorkBlocks();
 				}
-				workStopTime = CurrentTime;
-				CurrentTimeCard.AddWorkBlock(TimeBlock.CreateWorkBlock( workStartTime, workStopTime, currentProject.ProjectId,currentPhase.PhaseId));
-				_SumOfWorkComplete = CalculateSumOfWorkBlocks();
+				else
+				{
+					if (TimeCardCreated != null)
+					{
+						//CurrentTimeCardViewModel = new TimecardViewModel(CurrentTimeCard);
+
+						TimeCardCreated(this, new TimeCardEventArgs(CurrentTimeCard, true, true));
+					}
+					workStopTime = CurrentTime;
+					CurrentTimeCard.AddWorkBlock(TimeBlock.CreateWorkBlock(workStartTime, workStopTime, currentProject.ProjectId,
+						currentPhase.PhaseId));
+					_SumOfWorkComplete = CalculateSumOfWorkBlocks();
+				}
 			}
 			// save timecard
 			timeCardRepository.Update(CurrentTimeCard);
+			PreferenceManager.saveConfiguration(_pSettings);
 
 			//}
 			//}
@@ -446,13 +469,26 @@ namespace ProjectWatch.ViewModel
 			}
 			workStartTime = CurrentTime;
 			TimerState = State.Running;
-
+			if (currentProject?.StartDate == DateTime.MinValue)
+				currentProject.StartDate = DateTime.Today;
 			// IsStarted = true;
 			StartButtonContent = "Working";
 			TypeOfTime = "Time at Work";
 		}
 
 		public RelayCommand PauseCommand { get; set; }
+
+		public List<Phase> AllPhases
+		{
+			get { return _allPhases; }
+			set
+			{
+				if (Set(() => AllPhases, ref _allPhases, value, false))
+				{
+					Phases = _allPhases.FindAll(p => p.ProjectId == currentProject.ProjectId);
+				}
+			}
+		}
 
 
 		private void OnBreak()
@@ -478,9 +514,6 @@ namespace ProjectWatch.ViewModel
 		void TimerUpdate(object Sender, ElapsedEventArgs e)
 		{
 			TimeSpan totalTime;
-			string showHours;
-			string showMinutes;
-			string showSeconds;
 			RaisePropertyChanged(() => CurrentTime);
 			if (TimerState == State.Running)
 			{
@@ -496,10 +529,7 @@ namespace ProjectWatch.ViewModel
 			{
 				totalTime = TimeSpan.Zero;
 			}
-			showHours = totalTime.Hours.ToString();
-			showMinutes = (totalTime.Minutes < 10 ? "0" : "") + totalTime.Minutes.ToString();
-			showSeconds = (totalTime.Seconds < 10 ? "0" : "") + totalTime.Seconds.ToString();
-			HoursWorked = $"{showHours}:{showMinutes}:{showSeconds}";
+			HoursWorked = $"{totalTime.Hours:D2}:{totalTime.Minutes:D2}:{totalTime.Seconds:D2}";
 		}
 
 		//void BreakTimerUpdate(object Sender, ElapsedEventArgs e)

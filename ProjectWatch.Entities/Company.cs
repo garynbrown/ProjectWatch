@@ -64,13 +64,14 @@ namespace ProjectWatch.Entities
 		    set { _companyName = value; }
 	    }
 		private string _companyName;
-	    //public List<Contact> Employees
-	    //{
-		   // get { return _employees; }
-		   // set { _employees = value; }
-	    //}
+	    private string _note;
+	    public string Note
+	    {
+		    get { return _note; }
+		    set { _note = value; }
+	    }
 
-		[JsonIgnore]
+	    [JsonIgnore]
 	    public string PathName => "Company";
 		#endregion
 		
@@ -124,6 +125,7 @@ namespace ProjectWatch.Entities
 		    Company c = new Company();
 		    c.CompanyId = _companyId;
 		    c.CompanyName = _companyName;
+		    c.Note = _note;
 		    return c;
 	    }
 

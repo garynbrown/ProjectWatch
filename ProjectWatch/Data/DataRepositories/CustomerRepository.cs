@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ using ProjectWatch.Entities;
 namespace ProjectWatch.Data.DataRepositories
 {
 	[Export(typeof(ICustomerRepository))]
-	[PartCreationPolicy(CreationPolicy.NonShared)]
+	[PartCreationPolicy(CreationPolicy.Shared)]
 	public class CustomerRepository : DataRepositoryBase<Customer>, ICustomerRepository
 	{
 		#region Constructors
@@ -31,34 +32,98 @@ namespace ProjectWatch.Data.DataRepositories
 		}
 		#endregion
 		#region Overrides
-		protected override void DeserializeEntitySet()
+		protected override void DeserializeEntitySet(bool archive = false)
 		{
-			string jString =  JsonFileSupport.JsonReadFile(TargetEntitySet.PathName);
-			var ts = JsonConvert.DeserializeObject<CustomerSet>(jString);
-			if (ts?.EntitySet == null)
+			string path;
+			string jString;
+			if (archive)
 			{
-				TargetEntitySet.EntitySet = new List<Customer>();
+				path = Path.Combine("Archive", TargetEntitySet.PathName);
+				jString = JsonConvert.SerializeObject(ArchiveEntitySet, Formatting.Indented);
 			}
 			else
 			{
-				TargetEntitySet = ts;
+				path = TargetEntitySet.PathName;
+				jString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
 			}
-			TargetEntitySet.IsDirty = false;
+			var ts = JsonConvert.DeserializeObject<CustomerSet>(jString);
+			if (ts?.EntitySet == null)
+			{
+				if (!archive)
+				{
+					TargetEntitySet.EntitySet = new List<Customer>();
+				}
+				else
+				{
+					ArchiveEntitySet.EntitySet = new List<Customer>();
+				}
+			}
+			else
+			{
+				if (!archive)
+				{
+					TargetEntitySet = ts;
+				}
+				else
+				{
+					ArchiveEntitySet = ts;
+				}
+			}
+			if (!archive)
+			{
+				TargetEntitySet.IsDirty = false;
+			}
+			else
+			{
+				ArchiveEntitySet.IsDirty = false;
+			}
 		}
 
-		protected override async void DeserializeEntitySetAsync()
+		protected override async void DeserializeEntitySetAsync(bool archive = false)
 		{
-			string jString = await JsonFileSupport.JsonReadFileAsync(TargetEntitySet.PathName);
-			var ts = JsonConvert.DeserializeObject<CustomerSet>(jString);
-			if (ts?.EntitySet == null)
+			string path;
+			string jString;
+			if (archive)
 			{
-				TargetEntitySet.EntitySet = new List<Customer>();
+				path = Path.Combine("Archive", TargetEntitySet.PathName);
+				jString = JsonConvert.SerializeObject(ArchiveEntitySet, Formatting.Indented);
 			}
 			else
 			{
-				TargetEntitySet = ts;
+				path = TargetEntitySet.PathName;
+				jString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
 			}
-			TargetEntitySet.IsDirty = false;
+			var ts = JsonConvert.DeserializeObject<CustomerSet>(jString);
+			if (ts?.EntitySet == null)
+			{
+				if (!archive)
+				{
+					TargetEntitySet.EntitySet = new List<Customer>();
+				}
+				else
+				{
+					ArchiveEntitySet.EntitySet = new List<Customer>();
+				}
+			}
+			else
+			{
+				if (!archive)
+				{
+					TargetEntitySet = ts;
+				}
+				else
+				{
+					ArchiveEntitySet = ts;
+				}
+			}
+			if (!archive)
+			{
+				TargetEntitySet.IsDirty = false;
+			}
+			else
+			{
+				ArchiveEntitySet.IsDirty = false;
+			}
 		}
 		#endregion
 	}

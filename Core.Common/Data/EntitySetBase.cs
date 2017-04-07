@@ -25,5 +25,7 @@ namespace Core.Common.Data
 
 		[JsonIgnore]
 		public bool IsDirty { get; set; }
+
+		public int LastId { get; set; }
 	}
 }

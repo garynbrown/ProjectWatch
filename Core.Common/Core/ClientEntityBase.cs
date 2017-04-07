@@ -33,6 +33,7 @@ namespace Core.Common.Core
 
 		protected bool _IsDirty = false;
 		protected IValidator _Validator = null;
+		protected bool _deleted = false;
 
 		protected IEnumerable<ValidationFailure> _ValidationErrors = null;
 		
@@ -265,6 +266,12 @@ namespace Core.Common.Core
 
 
 		public abstract int EntityId { get; set; }
+
+		public virtual bool Deleted
+		{
+			get { return _deleted; }
+			set { _deleted = value; }
+		}
 
 		//public abstract string PathName { get;  } 
 	}

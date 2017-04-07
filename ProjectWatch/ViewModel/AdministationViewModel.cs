@@ -13,11 +13,11 @@ namespace ProjectWatch.ViewModel
 	[PartCreationPolicy(CreationPolicy.NonShared)]
 	public class AdministationViewModel : ViewModelCommon
 	{
-		private ProjectViewModel _projectViewModel = new ProjectViewModel();
-		PhaseViewModel _phaseViewModel = new PhaseViewModel();
-		CompanyViewModel _companyViewModel = new CompanyViewModel();
-		ReportsViewModel _reportsViewModel = new ReportsViewModel();
-		SettingsViewModel _settingsViewModel = new SettingsViewModel();
+		//private ProjectViewModel _projectViewModel = new ProjectViewModel();
+		//PhaseViewModel _phaseViewModel = new PhaseViewModel();
+		//CompanyViewModel _companyViewModel = new CompanyViewModel();
+		//ReportsViewModel _reportsViewModel = new ReportsViewModel();
+		//SettingsViewModel _settingsViewModel = new SettingsViewModel();
 
 		private ViewModelCommon _currentViewModel;
 
@@ -35,22 +35,22 @@ namespace ProjectWatch.ViewModel
 			get { return "Administration Tools"; }
 		}
 
-		private void OnNav(string destination)
-		{
-			switch (destination)
-			{
-				case "Project":
-					CurrentViewModel = _projectViewModel;
-					break;
-				case "Phase":
-					CurrentViewModel = _phaseViewModel;
-					break;
-				case "Settings":
-					CurrentViewModel = _settingsViewModel;
-					break;
-				default:
-					break;
-			}
-		}
+		//private void OnNav(string destination)
+		//{
+		//	switch (destination)
+		//	{
+		//		case "Project":
+		//			CurrentViewModel = _projectViewModel;
+		//			break;
+		//		case "Phase":
+		//			CurrentViewModel = _phaseViewModel;
+		//			break;
+		//		case "Settings":
+		//			CurrentViewModel = _settingsViewModel;
+		//			break;
+		//		default:
+		//			break;
+		//	}
+		//}
 	}
 }

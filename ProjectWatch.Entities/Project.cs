@@ -25,16 +25,21 @@ namespace ProjectWatch.Entities
 		public static Project CreateProject(global::System.Int32 projectId)
 		{
 			Project project = new Project();
-			project._projectId = projectId;
+			project.ProjectId = projectId;
 			return project;
 		}
+
 		public Project(int projectId)
+			: this()
 		{
-			_projectId = projectId;
+			ProjectId = projectId;
 		}
 		public Project()
 		{
-
+			CompnayId = -1;
+			BillingContactId = -1;
+			StartDate = DateTime.Today;
+			ManagementContactId = -1;
 		}
 		#endregion
 
@@ -44,128 +49,59 @@ namespace ProjectWatch.Entities
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public int ProjectId
-		{
-			get
-			{
-				return _projectId;
-			}
-			set
-			{
-				if (_projectId != value)
-				{
-					_projectId = value;
-					RaisePropertyChanged(() => ProjectId);
-				}
-			}
-		}
-		private int _projectId;
-		public int LastPhaseId { get; set; }
+		public int ProjectId { get; set; }
+
+		//public int LastPhaseId { get; set; }
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
-		[DataMember]
-		public int ContactId
-		{
-			get
-			{
-				return _clientId;
-			}
-			set
-			{
-				_clientId = value;
-				RaisePropertyChanged(() => _clientId);
-			}
-		}
-		private int _clientId;
+		//[DataMember]
+		//public int ContactId
+		//{
+		//	get
+		//	{
+		//		return _clientId;
+		//	}
+		//	set
+		//	{
+		//		_clientId = value;
+		//		RaisePropertyChanged(() => _clientId);
+		//	}
+		//}
+		//private int _clientId;
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public string Name
-		{
-			get
-			{
-				return _name;
-			}
-			set
-			{
-				_name = value;
-				RaisePropertyChanged(() => _name);
-			}
-		}
-		private string _name;
+		public string Name { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public double TimeQuote
-		{
-			get
-			{
-				return _timeQuote;
-			}
-			set
-			{
-				_timeQuote = value;
-				RaisePropertyChanged(() => _timeQuote);
-			}
-		}
-		private double _timeQuote;
+		public double TimeQuote { get; set; }
+
+		[DataMember]
+		public bool IsBillable { get; set; }
+		/// <summary>
+		/// No Metadata Documentation available.
+		/// </summary>
+		[DataMember]
+		public double CostQuote { get; set; }
 
 		/// <summary>
 		/// No Metadata Documentation available.
 		/// </summary>
 		[DataMember]
-		public double CostQuote
-		{
-			get
-			{
-				return _costQuote;
-			}
-			set
-			{
-				_costQuote = value;
-				RaisePropertyChanged(() => _costQuote);
-			}
-		}
-		private double _costQuote;
-
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		[DataMember]
-		public string Note
-		{
-			get
-			{
-				return _note;
-			}
-			set
-			{
-				_note = value;
-				RaisePropertyChanged(() => _note);
-			}
-		}
-		private string _note;
-		private DateTime _startDate;
-		private DateTime _endDate;
+		public string Note { get; set; }
 
 		[DataMember]
-		public DateTime StartDate
-		{
-			get { return _startDate; }
-			set { _startDate = value; }
-		}
+		public DateTime StartDate { get; set; }
 
 		[DataMember]
-		public DateTime EndDate
-		{
-			get { return _endDate; }
-			set { _endDate = value; }
-		}
+		public DateTime EndDate { get; set; }
+
 		[DataMember]
 		public int BillingContactId { get; set; }
 
@@ -174,14 +110,17 @@ namespace ProjectWatch.Entities
 
 		[DataMember]
 		public int CompnayId { get; set; }
-	
+
+		public bool HasChild { get; set; }
+		public bool HasParent { get; set; }
+		public double Rate { get; set; }
 
 		#endregion
 
 		#region Overrides
 		public override string ToString()
 		{
-			return _name;
+			return Name;
 		}
 		#endregion
 
@@ -191,9 +130,11 @@ namespace ProjectWatch.Entities
 		{
 			Project p = new Project();
 			p.ProjectId = ProjectId;
-			p.LastPhaseId = LastPhaseId;
-			p.ContactId = ContactId;
-			p._clientId = _clientId;
+			p.IsBillable = IsBillable;
+			p.HasChild = HasChild;
+			p.HasParent = HasParent;
+			//p.LastPhaseId = LastPhaseId;
+			p.Rate = Rate;
 			p.Name = Name;
 			p.Note = Note;
 			p.CostQuote = CostQuote;

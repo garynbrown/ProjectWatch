@@ -40,17 +40,21 @@ namespace ProjectWatch.ViewModel
 			get { return _phaseUnderEdit; }
 			set { _phaseUnderEdit = value; }
 		}
-		// todo the project and the phase now have billing contacts and Manageing contacts, update combo boxes and properties
 
 
 		public PhaseEditViewModel( Phase phase)
 		{
 			_phaseUnderEdit = phase.Clone() as Phase;
-			_billable = _phaseUnderEdit.Billable;
+			_billable = _phaseUnderEdit.IsBillable;
 			dashboardViewModel = ClientEntityBase.Container.GetExportedValue<DashboardViewModel>();
-			SaveCommand = new RelayCommand(OnSave);
+			SaveCommand = new RelayCommand(OnSave, CanSave);
 		}
 
+
+		bool CanSave()
+		{
+			return _phaseUnderEdit.IsDirty && !string.IsNullOrEmpty(_phaseName);
+		}
 		public RelayCommand SaveCommand { get; set; }
 
 		void OnSave()
@@ -63,7 +67,19 @@ namespace ProjectWatch.ViewModel
 			{
 				dashboardViewModel.phaseRepository.Update(PhaseUnderEdit);
 			}
-			dashboardViewModel.Phases = new ObservableCollection<Phase>(dashboardViewModel.phaseRepository.Get().EntitySet);
+			int indx = dashboardViewModel.Projects.FindIndex(p => p.ProjectId == _phaseUnderEdit.ProjectId);
+			if (indx > -1)
+			{
+				Project projectToEdit = indx > -1 ? dashboardViewModel.Projects[indx] : null;
+				if (projectToEdit != null)
+				{
+					projectToEdit.HasChild = true;
+				}
+				dashboardViewModel.projectRepository.Update(projectToEdit);
+			}
+			_phaseUnderEdit.CleanAll();
+			SaveCommand.RaiseCanExecuteChanged();
+			dashboardViewModel.AllPhases = dashboardViewModel.phaseRepository.Get().EntitySet.ToList();
 		}
 
 		public bool Billable
@@ -77,7 +93,8 @@ namespace ProjectWatch.ViewModel
 				if (Set(() => Billable, ref _billable, value, false))
 				{
 					PhaseUnderEdit.MakeDirty();
-					PhaseUnderEdit.Billable = _billable;
+					PhaseUnderEdit.IsBillable = _billable;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -104,6 +121,7 @@ namespace ProjectWatch.ViewModel
 					{
 						DueDate = "";
 					}
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -129,6 +147,7 @@ namespace ProjectWatch.ViewModel
 					{
 						HourQuote = "0.0";
 					}
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -147,6 +166,7 @@ namespace ProjectWatch.ViewModel
 					PhaseUnderEdit.MakeDirty();
 					PhaseUnderEdit.Note = _note;
 				}
+				SaveCommand.RaiseCanExecuteChanged();
 			}
 		}
 
@@ -169,6 +189,7 @@ namespace ProjectWatch.ViewModel
 				{
 					PhaseUnderEdit.MakeDirty();
 					PhaseUnderEdit.PhaseName = _phaseName;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -207,6 +228,7 @@ namespace ProjectWatch.ViewModel
 					{
 						Rate = "0.0";
 					}
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -231,6 +253,7 @@ namespace ProjectWatch.ViewModel
 					{
 						TimeQuote = "0.0";
 					}
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 
 			}

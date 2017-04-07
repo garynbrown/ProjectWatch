@@ -21,8 +21,8 @@ namespace Core.Common.Contracts
 		void RemoveAsync(T entity);
 		void Remove(T entity);
 
-		void RemoveAsync(int id);
-		void Remove(int id);
+		//void RemoveAsync(int id);
+		//void Remove(int id);
 
 		Task<T> UpdateAsync(T entity);
 		T Update(T entity);

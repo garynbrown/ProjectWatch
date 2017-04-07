@@ -9,16 +9,6 @@
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=localvm:TimecardViewModel, IsDesignTimeCreatable=True}"
         Height="470" Width="550" Background="#FF6894A2">
-    <!--<core:UserControlViewBase.Resources>
-        <DataTemplate x:Key="TimeCardTemplate">
-            <StackPanel>
-                <TextBlock Text="{Binding EntityId}"/>
-                <CheckBox IsChecked="{Binding IsDirty, Mode=OneWay}"/>
-                <CheckBox IsChecked="{Binding IsValid, Mode=OneWay}"/>
-                <TextBlock Text="{Binding TimeId, Mode=OneWay}"/>
-            </StackPanel>
-        </DataTemplate>
-    </core:UserControlViewBase.Resources>-->
     <Grid>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="184,16,0,0" TextWrapping="Wrap" Text="Time Card Maintenance" VerticalAlignment="Top"/>
         <Grid HorizontalAlignment="Left" Margin="10,61,0,0" VerticalAlignment="Top">

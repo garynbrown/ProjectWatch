@@ -14,6 +14,11 @@ using Newtonsoft.Json;
 
 namespace ProjectWatch.Entities
 {
+	public enum TimeType
+	{
+		Break = 0,
+		Task = 1
+	}
 	[DataContract]
 	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public class TimeCard : ClientEntityBase, IIdentifiableEntity, ICloneable
@@ -41,6 +46,14 @@ namespace ProjectWatch.Entities
 			int day = ((TimeId - (year*10000 + month*100)));
 			return $"{month}/{day}/{year}";
 		}
+
+		public DateTime TimeCardDateTime()
+		{
+			int year = (int)(TimeId / 10000);
+			int month = (int)((TimeId - (year * 10000)) / 100);
+			int day = ((TimeId - (year * 10000 + month * 100)));
+			return new DateTime(year,month,day);
+		}
 		public TimeCard(DateTime date)
 		{
 			TimeId = MakeTimeCardIdFromDate(date);
@@ -59,8 +72,9 @@ namespace ProjectWatch.Entities
 
 		private TimeBlock _activeTaskTimeBlock;
 		private TimeBlock _activeBreakTimeBlock;
-		public List<TimeBlock> WorkBlocks = new List<TimeBlock>();
-		public List<TimeBlock> BreakBlocks = new List<TimeBlock>();
+		//public List<TimeBlock> WorkBlocks = new List<TimeBlock>();
+		//public List<TimeBlock> BreakBlocks = new List<TimeBlock>();
+		public List<TimeBlock> TimeBlocks = new List<TimeBlock>();
 		private int _timeId;
 
 
@@ -109,26 +123,24 @@ namespace ProjectWatch.Entities
 		//}
 		public void AddWorkBlock(TimeBlock timeBlock)
 		{
-			if (timeBlock.TimeBlockType == 1)
+			if (timeBlock.TimeBlockType != TimeType.Task)
 			{
-				WorkBlocks.Add(timeBlock);
+				timeBlock.TimeBlockType = TimeType.Task;
 			}
-			else
-			{
-				AddBreakBlock(timeBlock);
-			}
+				TimeBlocks.Add(timeBlock);
 		}
 
 		public void AddBreakBlock(TimeBlock timeBlock)
 		{
-			if (timeBlock.TimeBlockType == 0)
+			if (timeBlock.TimeBlockType != TimeType.Break)
 			{
-				BreakBlocks.Add(timeBlock);
+				timeBlock.TimeBlockType = TimeType.Break;
 			}
-			else
-			{
-				AddWorkBlock(timeBlock);
-			}
+				TimeBlocks.Add(timeBlock);
+		}
+		public void AddTimeBlock(TimeBlock timeBlock)
+		{
+			TimeBlocks.Add(timeBlock);
 		}
 
 		//public void AddWorkBlock(DateTime startTime, DateTime stopTime)
@@ -166,8 +178,8 @@ namespace ProjectWatch.Entities
 			set { _activeBreakTimeBlock = value; }
 		}
 
-		public int ProjectId { get; set; }
-		public int PhaseId { get; set; }
+		//public int ProjectId { get; set; }
+		//public int PhaseId { get; set; }
 		#endregion
 		#endregion
 		#region Methods
@@ -195,17 +207,12 @@ namespace ProjectWatch.Entities
 		{
 			TimeCard t = new TimeCard();
 			t.TimeId = TimeId;
-			t.PhaseId = PhaseId;
-			t.ProjectId = ProjectId;
-			t.BreakBlocks = new List<TimeBlock>();
-			foreach (TimeBlock _timeBlock in BreakBlocks)
+			//t.PhaseId = PhaseId;
+			//t.ProjectId = ProjectId;
+			t.TimeBlocks = new List<TimeBlock>();
+			foreach (TimeBlock _timeBlock in TimeBlocks)
 			{
-				t.BreakBlocks.Add(_timeBlock.Clone() as TimeBlock);
-			}
-			t.WorkBlocks = new List<TimeBlock>();
-			foreach (TimeBlock _timeBlock in WorkBlocks)
-			{
-				t.WorkBlocks.Add(_timeBlock.Clone() as TimeBlock);
+				t.TimeBlocks.Add(_timeBlock.Clone() as TimeBlock);
 			}
 
 			return t;

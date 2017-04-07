@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,13 +17,14 @@ using ProjectWatch.Entities;
 namespace ProjectWatch.Data.DataRepositories
 {
 	[Export(typeof(ICompanyRepository))]
-	[PartCreationPolicy(CreationPolicy.NonShared)]
+	[PartCreationPolicy(CreationPolicy.Shared)]
 	public class CompanyRepository : DataRepositoryBase<Company>, ICompanyRepository
 	{
 		#region Constructors
 		public CompanyRepository()
 		{
 			base.TargetEntitySet = ClientEntityBase.Container.GetExportedValue<EntitySetBase<Company>>();
+			base.ArchiveEntitySet = ClientEntityBase.Container.GetExportedValue<EntitySetBase<Company>>();
 		}
 
 		public CompanyRepository(EntitySetBase<Company> targetEntitySet ) : base(targetEntitySet)
@@ -30,34 +32,94 @@ namespace ProjectWatch.Data.DataRepositories
 		}
 		#endregion
 		#region Overrides
-		protected override void DeserializeEntitySet()
+		protected override void DeserializeEntitySet(bool archive = false)
 		{
-			string jString = JsonFileSupport.JsonReadFile(TargetEntitySet.PathName);
-			var ts = JsonConvert.DeserializeObject<CompanySet>(jString);
-			if (ts?.EntitySet == null)
+			string path;
+			if (archive)
 			{
-				TargetEntitySet.EntitySet = new List<Company>();
+				path = Path.Combine("Archive", TargetEntitySet.PathName);
 			}
 			else
 			{
-				TargetEntitySet = ts;
+				path = TargetEntitySet.PathName;
 			}
-			TargetEntitySet.IsDirty = false;
+			string jString = JsonFileSupport.JsonReadFile(path);
+			var ts = JsonConvert.DeserializeObject<CompanySet>(jString);
+			if (ts?.EntitySet == null)
+			{
+				if (!archive)
+				{
+					TargetEntitySet.EntitySet = new List<Company>();
+				}
+				else
+				{
+					ArchiveEntitySet.EntitySet = new List<Company>();
+				}
+			}
+			else
+			{
+				if (!archive)
+				{
+					TargetEntitySet = ts;
+				}
+				else
+				{
+					ArchiveEntitySet = ts;
+				}
+			}
+			if (!archive)
+			{
+				TargetEntitySet.IsDirty = false;
+			}
+			else
+			{
+				ArchiveEntitySet.IsDirty = false;
+			}
 		}
 
-		protected override async void DeserializeEntitySetAsync()
+		protected override async void DeserializeEntitySetAsync(bool archive = false)
 		{
-			string jString = await JsonFileSupport.JsonReadFileAsync(TargetEntitySet.PathName);
-			var ts = JsonConvert.DeserializeObject<CompanySet>(jString);
-			if (ts?.EntitySet == null)
+			string path;
+			if (archive)
 			{
-				TargetEntitySet.EntitySet = new List<Company>();
+				path = Path.Combine("Archive", TargetEntitySet.PathName);
 			}
 			else
 			{
-				TargetEntitySet = ts;
+				path = TargetEntitySet.PathName;
 			}
-			TargetEntitySet.IsDirty = false;
+			string jString = JsonFileSupport.JsonReadFile(path);
+			var ts = JsonConvert.DeserializeObject<CompanySet>(jString);
+			if (ts?.EntitySet == null)
+			{
+				if (!archive)
+				{
+					TargetEntitySet.EntitySet = new List<Company>();
+				}
+				else
+				{
+					ArchiveEntitySet.EntitySet = new List<Company>();
+				}
+			}
+			else
+			{
+				if (!archive)
+				{
+					TargetEntitySet = ts;
+				}
+				else
+				{
+					ArchiveEntitySet = ts;
+				}
+			}
+			if (!archive)
+			{
+				TargetEntitySet.IsDirty = false;
+			}
+			else
+			{
+				ArchiveEntitySet.IsDirty = false;
+			}
 		}
 		#endregion
 	}

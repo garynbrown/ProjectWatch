@@ -11,7 +11,11 @@ namespace ProjectWatch.Support
 	public static class PreferenceManager
 	{
 		//  https://msdn.microsoft.com/en-us/library/system.environment.specialfolder(v=vs.110).aspx 
-		public static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"ProjectWatch\Config\ProjectWatch.config");
+#if DEBUG
+		public static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"ProjectWatch\Test\Data\ProjectWatch.config");
+#else
+		public static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"ProjectWatch\Data\ProjectWatch.config");
+#endif
 #if OldCode
 		public static bool ProVersion = false;
 		public static int LastProject = -1;
@@ -23,7 +27,10 @@ namespace ProjectWatch.Support
 		public static void LoadConfiguration(ref PreferenceSettings PSettings)
 		{
 			if (!File.Exists(ConfigPath))
+			{
+				PSettings = new PreferenceSettings();
 				return;
+			}
 			using (TextReader reader = new StreamReader(ConfigPath))
 			{
 				_configString = reader.ReadToEnd();

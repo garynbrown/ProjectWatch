@@ -11,7 +11,7 @@
                         >
     <Grid>
         <TextBlock  HorizontalAlignment="Left" Margin="233,25,0,0" TextWrapping="Wrap" Text="Company Maintanence" VerticalAlignment="Top"/>
-        <ListBox x:Name="CompanylistBox" ItemsSource="{Binding DataContext.CompanyMainCompanies, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}" SelectedItem="{Binding SelectedCompany, Mode=TwoWay}" HorizontalAlignment="Left" Height="185" Margin="10,59,0,0" VerticalAlignment="Top" Width="155">
+        <ListBox x:Name="CompanylistBox" ItemsSource="{Binding Companies}" SelectedItem="{Binding SelectedCompany, Mode=TwoWay}" HorizontalAlignment="Left" Height="185" Margin="10,59,0,0" VerticalAlignment="Top" Width="155">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -23,7 +23,7 @@
                             </TextBlock>
                             <TextBlock Text="  "/>
                             <TextBlock>
-                                <Hyperlink Command="{Binding RelativeSource={RelativeSource AncestorType=local:CompanyView}}" CommandParameter="{Binding}">
+                                <Hyperlink Command="{Binding DataContext.DeleteCompanyCommand, RelativeSource={RelativeSource AncestorType=local:CompanyView}}" CommandParameter="{Binding}">
                                     <TextBlock Text="Del"/>
                                 </Hyperlink>
                             </TextBlock>
@@ -33,7 +33,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox x:Name="EmployeelistBox" ItemsSource="{Binding DataContext.CompanyMainEmployees, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}" SelectedItem="{Binding SelectedContact, Mode=TwoWay}" HorizontalAlignment="Left" Height="185" Margin="182,59,0,0" VerticalAlignment="Top" Width="141">
+        <ListBox x:Name="EmployeelistBox" ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedContact}" HorizontalAlignment="Left" Height="185" Margin="182,59,0,0" VerticalAlignment="Top" Width="141">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -57,14 +57,15 @@
         </ListBox>
         <TextBlock  HorizontalAlignment="Left" Margin="47,43,0,0" TextWrapping="Wrap" Text="Companies" VerticalAlignment="Top"/>
         <TextBlock  HorizontalAlignment="Left" Margin="213,43,0,0" TextWrapping="Wrap" Text="Employees" VerticalAlignment="Top"/>
-        <Button x:Name="AddCompanyButton" Command="{Binding DataContext.AddCompanyCommand, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}" CommandParameter="{Binding CompanyToAdd}" IsEnabled="{Binding CanAddCompany}"  Content="Add Company" HorizontalAlignment="Left" Margin="27,305,0,0" VerticalAlignment="Top" Width="91"/>
+        <!--<Button x:Name="AddCompanyButton" Command="{Binding DataContext.AddCompanyCommand, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}" CommandParameter="{Binding CompanyToAdd}" IsEnabled="{Binding CanAddCompany}"  Content="Add Company" HorizontalAlignment="Left" Margin="27,305,0,0" VerticalAlignment="Top" Width="91"/>-->
+        <Button x:Name="AddCompanyButton" Command="{Binding DataContext.AddCompanyCommand, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}"  Content="Add Company" HorizontalAlignment="Left" Margin="47,251,0,0" VerticalAlignment="Top" Width="91"/>
         <Button x:Name="AddEmployeeButton" Command="{Binding DataContext.AddContactCommand, RelativeSource={RelativeSource AncestorType=local:CompanyMainView}}" CommandParameter="{Binding SelectedCompany}" IsEnabled="{Binding CanAddEmployee}" Content="Add Emplyee" HorizontalAlignment="Left" Margin="203,250,0,0" VerticalAlignment="Top" Width="82"/>
-        <TextBlock  HorizontalAlignment="Left" Margin="77,345,0,0" TextWrapping="Wrap" Text="Company Information" VerticalAlignment="Top"/>
+        <TextBlock  HorizontalAlignment="Left" Margin="203,345,0,0" TextWrapping="Wrap" Text="Company Information" VerticalAlignment="Top"/>
         <TextBlock  HorizontalAlignment="Left" Margin="343,77,0,0" TextWrapping="Wrap" Text="Employee Information" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="21,366,0,0" TextWrapping="Wrap" Text="Company Name" VerticalAlignment="Top"/>
         <TextBlock x:Name="CompanyNametextBlock" HorizontalAlignment="Left" Margin="129,366,0,0" TextWrapping="Wrap" Text="{Binding CompanyName}" VerticalAlignment="Top" Width="166"/>
-        <TextBlock HorizontalAlignment="Left" Margin="21,391,0,0" TextWrapping="Wrap" Text="Known Employees" VerticalAlignment="Top"/>
-        <TextBlock x:Name="NumberOfEmployeestextBlock" HorizontalAlignment="Left" Margin="129,391,0,0" TextWrapping="Wrap" Text="{Binding TotalEmployees}" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="21,411,0,0" TextWrapping="Wrap" Text="Known Employees" VerticalAlignment="Top"/>
+        <TextBlock x:Name="NumberOfEmployeestextBlock" HorizontalAlignment="Left" Margin="129,411,0,0" TextWrapping="Wrap" Text="{Binding TotalEmployees}" VerticalAlignment="Top"/>
         <TextBlock  HorizontalAlignment="Left" Margin="328,119,0,0" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top"/>
         <TextBlock x:Name="NmaeTextBlock" HorizontalAlignment="Left" Margin="371,119,0,0" TextWrapping="Wrap" Text="{Binding SelectedContact}" VerticalAlignment="Top" Width="175"/>
         <TextBlock  HorizontalAlignment="Left" Margin="328,147,0,0" TextWrapping="Wrap" Text="Email" VerticalAlignment="Top"/>
@@ -73,8 +74,7 @@
         <TextBlock x:Name="OfficePhoneTextBlock" HorizontalAlignment="Left" Margin="407,177,0,0" TextWrapping="Wrap" Text="{Binding SelectedContact.Phone1}" VerticalAlignment="Top" Width="139"/>
         <TextBlock  HorizontalAlignment="Left" Margin="328,205,0,0" TextWrapping="Wrap" Text="Mobile Phone" VerticalAlignment="Top"/>
         <TextBlock x:Name="bilePhoneTextBlock" HorizontalAlignment="Left" Margin="407,205,0,0" TextWrapping="Wrap" Text="{Binding SelectedContact.Phone2}" VerticalAlignment="Top" Width="139"/>
-        <TextBlock Text="New Company Name" HorizontalAlignment="Left" Height="23" Margin="9,256,0,191.4"/>
-        <TextBox x:Name="NewCompanyName" HorizontalAlignment="Left" Height="23" Margin="9,277,0,0" TextWrapping="Wrap" Text="{Binding CompanyToAdd, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="233,387,0,0" TextWrapping="Wrap" Text="{Binding Note}" VerticalAlignment="Top" Height="61" Width="287"/>
 
     </Grid>
 </core:UserControlViewBase>

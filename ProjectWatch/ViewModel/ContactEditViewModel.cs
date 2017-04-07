@@ -35,7 +35,7 @@ namespace ProjectWatch.ViewModel
 		public ContactEditViewModel(Contact contact)
 		{
 			_contactUnderEdit = contact.Clone() as Contact;
-			SaveCommand = new RelayCommand(OnSave);
+			SaveCommand = new RelayCommand(OnSave, CanSave);
 		}
 
 		public ContactEditViewModel(Company company)  : this(new Contact( company.CompanyId,-1))
@@ -55,6 +55,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.FirstName = _firstName;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -72,6 +73,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.LastName = _lastName;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -89,6 +91,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.Email = _email;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -115,6 +118,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.Phone1 = _phone1;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -132,6 +136,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.Phone2 = _phone2;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -149,6 +154,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.Street1 = _street1;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -166,6 +172,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.Street2 = _street2;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -183,6 +190,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.City = _city;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -200,6 +208,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.State = _state;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -217,6 +226,7 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.ZipCode = _zip;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -234,8 +244,14 @@ namespace ProjectWatch.ViewModel
 				{
 					_contactUnderEdit.MakeDirty();
 					_contactUnderEdit.Note = _note;
+					SaveCommand.RaiseCanExecuteChanged();
 				}
 			}
+		}
+
+		bool CanSave()
+		{
+			return _contactUnderEdit.IsDirty  && (!string.IsNullOrEmpty(FirstName) || !string.IsNullOrEmpty(LastName));
 		}
 		public RelayCommand SaveCommand { get; set; }
 
@@ -249,7 +265,8 @@ namespace ProjectWatch.ViewModel
 			{
 				companyMainViewModel.contactRepository.Update(_contactUnderEdit);
 			}
-			companyMainViewModel.CompanyMainEmployees = new ObservableCollection<Contact>(companyMainViewModel.contactRepository.Get().EntitySet);
+			companyMainViewModel.CompanyMainEmployees =companyMainViewModel.contactRepository.Get().EntitySet.ToList();
+			_contactUnderEdit.CleanAll();
 		}
 
 		protected override void OnViewLoaded()

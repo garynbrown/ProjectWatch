@@ -8,6 +8,7 @@ using Core.Common.Core;
 using Core.Common.Utils;
 using Newtonsoft.Json;
 using System.Collections;
+using System.IO;
 
 
 namespace Core.Common.Data
@@ -17,16 +18,17 @@ namespace Core.Common.Data
 	{
 		#region Properties
 		protected EntitySetBase<T> TargetEntitySet = null;
+		protected EntitySetBase<T> ArchiveEntitySet = null;
 		#endregion
 
 		#region Constructors
 		public DataRepositoryBase()
 		{
-			ClientEntityType = typeof(T);
+			//ClientEntityType = typeof(T);
 			//TargetEntitySet = ClientEntityBase.Container.GetExportedValue<EntitySetBase<T>>();
 		}
 
-		public Type ClientEntityType { get; }
+		//public Type ClientEntityType { get; }
 
 		public DataRepositoryBase(EntitySetBase<T> targetEntitySet)
 		{
@@ -47,7 +49,14 @@ namespace Core.Common.Data
 			}
 			else
 			{
-				entity.EntityId = Entities.Any() ? Entities.Max(p => p.EntityId) + 1 :0;
+				int entityMax = 0;
+				if (Entities.Any())
+				{
+					int tempMax = Entities.Max(p => p.EntityId);
+					entityMax = TargetEntitySet.LastId > tempMax ? TargetEntitySet.LastId + 1 : tempMax + 1;
+				}
+				entity.EntityId = entityMax;
+				TargetEntitySet.LastId = entityMax;
 				Entities.Add(entity);
 				SerializeEntitySetAsync();
 			}
@@ -66,7 +75,14 @@ namespace Core.Common.Data
 			}
 			else
 			{
-				entity.EntityId = Entities.Any() ? Entities.Max(p => p.EntityId) + 1: 0;
+				int entityMax =0;
+				if (Entities.Any())
+				{
+					int tempMax =Entities.Max(p => p.EntityId);
+					entityMax = TargetEntitySet.LastId > tempMax ? TargetEntitySet.LastId + 1 : tempMax + 1;
+				}
+				entity.EntityId = entityMax;
+				TargetEntitySet.LastId = entityMax;
 				Entities.Add(entity);
 				SerializeEntitySet();
 			}
@@ -88,7 +104,7 @@ namespace Core.Common.Data
 			//return  retVal;
 		}
 
-		public EntitySetBase<T> Get()
+		public virtual EntitySetBase<T> Get()
 		{
 			if (TargetEntitySet.EntitySet == null || !TargetEntitySet.EntitySet.Any())
 			{
@@ -138,7 +154,7 @@ namespace Core.Common.Data
 			return Entities[indx];
 		}
 
-		public T Get(int id)
+		public virtual T Get(int id)
 		{
 			if (id < 0)
 			{
@@ -185,10 +201,15 @@ namespace Core.Common.Data
 			{
 				Entities.RemoveAt(indx);
 				SerializeEntitySetAsync();
+				DeserializeEntitySetAsync(true);
+				List<T> AEntity = ArchiveEntitySet.EntitySet as List<T>;
+				entity.Deleted = true;
+				AEntity.Add(entity);
+				SerializeEntitySetAsync(true);
 			}
 		}
 
-		public void Remove(T entity)
+		public virtual void Remove(T entity)
 		{
 			if (TargetEntitySet?.EntitySet == null)
 				return;
@@ -198,34 +219,40 @@ namespace Core.Common.Data
 			{
 				Entities.RemoveAt(indx);
 				SerializeEntitySet();
+				DeserializeEntitySet(true);
+				List<T> AEntity = ArchiveEntitySet.EntitySet as List<T>;
+				entity.Deleted = true;
+				AEntity.Add(entity);
+//				ArchiveEntitySet.EntitySet = new List<T>(AEntity);
+				SerializeEntitySet(true);
 			}
 		}
 
-		public virtual async void RemoveAsync(int id)
-		{
-			if (TargetEntitySet?.EntitySet == null)
-				return ;
-			List<T> Entities = (TargetEntitySet.EntitySet as List<T>) ?? new List<T>();
-			int indx = Entities.FindIndex(e => e.EntityId == id);
-			if (indx > -1)
-			{
-				Entities.RemoveAt(indx);
-				SerializeEntitySetAsync();
-			}
-		}
+		//public virtual async void RemoveAsync(int id)
+		//{
+		//	if (TargetEntitySet?.EntitySet == null)
+		//		return ;
+		//	List<T> Entities = (TargetEntitySet.EntitySet as List<T>) ?? new List<T>();
+		//	int indx = Entities.FindIndex(e => e.EntityId == id);
+		//	if (indx > -1)
+		//	{
+		//		Entities.RemoveAt(indx);
+		//		SerializeEntitySetAsync();
+		//	}
+		//}
 
-		public void Remove(int id)
-		{
-			if (TargetEntitySet?.EntitySet == null)
-				return;
-			List<T> Entities = (TargetEntitySet.EntitySet as List<T>) ?? new List<T>();
-			int indx = Entities.FindIndex(e => e.EntityId == id);
-			if (indx > -1)
-			{
-				Entities.RemoveAt(indx);
-				SerializeEntitySet();
-			}
-		}
+		//public void Remove(int id)
+		//{
+		//	if (TargetEntitySet?.EntitySet == null)
+		//		return;
+		//	List<T> Entities = (TargetEntitySet.EntitySet as List<T>) ?? new List<T>();
+		//	int indx = Entities.FindIndex(e => e.EntityId == id);
+		//	if (indx > -1)
+		//	{
+		//		Entities.RemoveAt(indx);
+		//		SerializeEntitySet();
+		//	}
+		//}
 
 		public virtual async Task<T> UpdateAsync(T entity)
 		{
@@ -273,18 +300,41 @@ namespace Core.Common.Data
 
 		#region Methods
 
-		protected abstract void DeserializeEntitySet();
-		protected abstract void DeserializeEntitySetAsync();
-		protected async void SerializeEntitySetAsync()
+		protected abstract void DeserializeEntitySet(bool archive = false);
+		protected abstract void DeserializeEntitySetAsync(bool archive = false);
+		protected async void SerializeEntitySetAsync(bool archive = false)
 		{
-			string jsonString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
-			bool isGood = await JsonFileSupport.WriteFileAsync(TargetEntitySet.PathName, jsonString);
+			string path;
+			string jsonString;
+			if (archive)
+			{
+				path = Path.Combine("Archive", TargetEntitySet.PathName);
+				jsonString = JsonConvert.SerializeObject(ArchiveEntitySet, Formatting.Indented);
+			}
+			else
+			{
+				path = TargetEntitySet.PathName;
+				jsonString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
+			}
+			//jsonString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
+			bool isGood = await JsonFileSupport.WriteFileAsync(path, jsonString);   // TargetEntitySet.PathName
 			TargetEntitySet.IsDirty = !isGood;
 		}
-		protected void SerializeEntitySet()
+		protected void SerializeEntitySet(bool archive = false)
 		{
-			string jsonString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
-			bool isGood =  JsonFileSupport.WriteFile(TargetEntitySet.PathName, jsonString);
+			string path;
+			string jsonString;
+			if (archive)
+			{
+				path = Path.Combine("Archive", TargetEntitySet.PathName);
+				jsonString = JsonConvert.SerializeObject(ArchiveEntitySet, Formatting.Indented);
+			}
+			else
+			{
+				path = TargetEntitySet.PathName;
+				jsonString = JsonConvert.SerializeObject(TargetEntitySet, Formatting.Indented);
+			}
+			bool isGood =  JsonFileSupport.WriteFile(path, jsonString);     // TargetEntitySet.PathName
 			TargetEntitySet.IsDirty = !isGood;
 		}
 		#endregion

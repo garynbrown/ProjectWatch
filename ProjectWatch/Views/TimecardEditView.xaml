@@ -10,70 +10,79 @@
     <Grid>
         <Grid HorizontalAlignment="Left" Margin="21,43,0,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="266"/>
             </Grid.RowDefinitions>
             <Grid Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40" SharedSizeGroup="Start"/>
+                    <ColumnDefinition Width="40" SharedSizeGroup="Link" />
+                    <ColumnDefinition Width="55" SharedSizeGroup="Start"/>
                     <ColumnDefinition Width="40" SharedSizeGroup="Hours"/>
-                    <ColumnDefinition Width="40" SharedSizeGroup="Type"/>
-                    <ColumnDefinition Width="40" SharedSizeGroup="Project"/>
-                    <ColumnDefinition Width="40" SharedSizeGroup="Phase"/>
+                    <ColumnDefinition Width="45" SharedSizeGroup="Type"/>
+                    <ColumnDefinition Width="60" SharedSizeGroup="Project"/>
+                    <ColumnDefinition Width="60" SharedSizeGroup="Phase"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Start"/>
-                <TextBlock Grid.Column="1" Text="Hours"/>
-                <TextBlock Grid.Column="2" Text="Type"/>
-                <TextBlock Grid.Column="3" Text="Project"/>
-                <TextBlock Grid.Column="4" Text="Phase"/>
+                <TextBlock Grid.Column="1" Text="Start"/>
+                <TextBlock Grid.Column="2" Text="Hours"/>
+                <TextBlock Grid.Column="3" Text="Type"/>
+                <TextBlock Grid.Column="4" Text="Project"/>
+                <TextBlock Grid.Column="5" Text="Phase"/>
             </Grid>
-            <ListBox Grid.Row="1" x:Name="listBox" ItemsSource="{Binding DisplayTimeBlocks}" SelectedItem="{Binding SelectedTimeBlock}" HorizontalAlignment="Left" Height="326"  VerticalAlignment="Top" Width="255" >
+            <ListBox Grid.Row="1" x:Name="listBox" ItemsSource="{Binding DisplayTimeBlocks}" SelectedItem="{Binding SelectedTimeBlock}" HorizontalAlignment="Left" Height="266"  VerticalAlignment="Top" Width="350" Margin="0,0.2,0,0" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40" SharedSizeGroup="Start"/>
+                                <ColumnDefinition Width="40" SharedSizeGroup="Link" />
+                                <ColumnDefinition Width="55" SharedSizeGroup="Start"/>
                                 <ColumnDefinition Width="40" SharedSizeGroup="Hours"/>
-                                <ColumnDefinition Width="40" SharedSizeGroup="Type"/>
-                                <ColumnDefinition Width="40" SharedSizeGroup="Project"/>
-                                <ColumnDefinition Width="40" SharedSizeGroup="Phase"/>
+                                <ColumnDefinition Width="45" SharedSizeGroup="Type"/>
+                                <ColumnDefinition Width="60" SharedSizeGroup="Project"/>
+                                <ColumnDefinition Width="60" SharedSizeGroup="Phase"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding StartTime}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding DtoHours}"/>
-                            <TextBlock Grid.Column="2" Text="{Binding DtoTimeType}" />
-                            <TextBlock Grid.Column="3" Text="{Binding DtoProject}" />
-                            <TextBlock Grid.Column="4" Text="{Binding DtoPhase}" />
+                            <TextBlock>
+                                <Hyperlink Command="{Binding DataContext.DeleteTimeBlockCommand, RelativeSource={RelativeSource AncestorType=local:TimecardEditView}}" CommandParameter="{Binding}">
+                                    <TextBlock Text="Del"  />
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" Text="{Binding StartTime}"/>
+                            <TextBlock Grid.Column="2" Text="{Binding DtoHours}"/>
+                            <TextBlock Grid.Column="3" Text="{Binding DtoTimeType}" />
+                            <TextBlock Grid.Column="4" Text="{Binding DtoProject}" />
+                            <TextBlock Grid.Column="5" Text="{Binding DtoPhase}" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            
+
         </Grid>
 
         <Button x:Name="Exit" Content="Exit" Command="{Binding DataContext.TimecardViewCommand, RelativeSource={RelativeSource AncestorType=local:TimeCardMainView}}" HorizontalAlignment="Left" Margin="43,429,0,0" VerticalAlignment="Top" Width="102" TabIndex="8"/>
-        <Button x:Name="Save" Content="Save TimeCard" Command="{Binding SaveCommand}" HorizontalAlignment="Left" Margin="43,392,0,0" VerticalAlignment="Top" Width="102" TabIndex="7"/>
-        <TextBlock  HorizontalAlignment="Left" Margin="207,11,0,0" TextWrapping="Wrap" Text="Edit/Create Time Card" VerticalAlignment="Top"/>
+        <Button x:Name="Save" Content="{Binding SaveButtonContent}" Command="{Binding SaveCommand}" HorizontalAlignment="Left" Margin="43,392,0,0" VerticalAlignment="Top" Width="110" TabIndex="7"/>
+        <TextBlock  HorizontalAlignment="Left" Margin="157,11,0,0" TextWrapping="Wrap" Text="Edit/Create Time Card" VerticalAlignment="Top"/>
         <ComboBox x:Name="CompanycomboBox" ItemsSource="{Binding Companies}" SelectedItem="{Binding SelectedCompany, Mode=TwoWay}" HorizontalAlignment="Left" Margin="405,247,0,0" VerticalAlignment="Top" Width="120"/>
         <TextBlock HorizontalAlignment="Left" Margin="428,227,0,0" TextWrapping="Wrap" Text="Company" VerticalAlignment="Top"/>
         <ComboBox x:Name="PhaseComboBox" ItemsSource="{Binding Phases}" SelectedItem="{Binding SelectedPhase, Mode=TwoWay}" HorizontalAlignment="Left" Margin="405,358,0,0" VerticalAlignment="Top" Width="120"/>
         <TextBlock HorizontalAlignment="Left" Margin="428,338,0,0" TextWrapping="Wrap" Text="Phase" VerticalAlignment="Top"/>
         <ComboBox x:Name="ProjectComboBox" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject, Mode=TwoWay}" HorizontalAlignment="Left" Margin="405,302,0,0" VerticalAlignment="Top" Width="120"/>
         <TextBlock HorizontalAlignment="Left" Margin="428,282,0,0" TextWrapping="Wrap" Text="Project" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="405,113,0,0" TextWrapping="Wrap" Text="Start Time" VerticalAlignment="Top"/>
-        <TextBox x:Name="StartTime" HorizontalAlignment="Left" Height="23" Margin="386,133,0,0" TextWrapping="Wrap" Text="{Binding StartTime}" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="405,169,0,0" TextWrapping="Wrap" Text="End Time" VerticalAlignment="Top"/>
-        <TextBox x:Name="EndTime" HorizontalAlignment="Left" Height="23" Margin="386,189,0,0" TextWrapping="Wrap" Text="{Binding EndTime}" VerticalAlignment="Top" Width="120"/>
-        <RadioButton x:Name="StartAM" GroupName="StartTime" IsChecked="{Binding StartAM}" Content="AM" HorizontalAlignment="Left" Margin="513,136,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="StartPM" GroupName="StartTime" IsChecked="{Binding StartPM}" Content="PM" HorizontalAlignment="Left" Margin="513,150,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="EndAM" GroupName="EndTime" IsChecked="{Binding EndAM}" Content="AM" HorizontalAlignment="Left" Margin="513,191,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="EndPM" GroupName="EndTime" IsChecked="{Binding EndPM}" Content="PM" HorizontalAlignment="Left" Margin="513,205,0,0" VerticalAlignment="Top"/>
-        <DatePicker HorizontalAlignment="Left" Text="{Binding TimeCardDate, Mode=TwoWay}" Margin="405,45,0,0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="411,29,0,0" TextWrapping="Wrap" Text="Time Card Date" VerticalAlignment="Top"/>
-        <Button x:Name="UpdateTimeBlock" Content="Update TimeBlock" HorizontalAlignment="Left" Margin="293,392,0,0" VerticalAlignment="Top" Width="106"/>
-        <Button x:Name="CreateTimeBlock" Content="Create TimeBlock" HorizontalAlignment="Left" Margin="422,392,0,0" VerticalAlignment="Top" Width="103"/>
-        <Button x:Name="ClearFields" Content="Clear Fields" HorizontalAlignment="Left" Margin="422,426,0,0" VerticalAlignment="Top" Width="75"/>
-        <RadioButton x:Name="BreakTimeRB" GroupName="TimeType" Content="BreakTime" IsChecked="{Binding BreakType}" HorizontalAlignment="Left" Margin="428,80,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="WorkTimeRB" GroupName="TimeType" Content="WorkTime" IsChecked="{Binding WorkType}" HorizontalAlignment="Left" Margin="428,97,0,0" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="425,83,0,0" TextWrapping="Wrap" Text="Start Time" VerticalAlignment="Top"/>
+        <TextBox x:Name="StartTime" HorizontalAlignment="Left" Height="23" Margin="406,103,0,0" TextWrapping="Wrap" Text="{Binding StartTime}" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="425,139,0,0" TextWrapping="Wrap" Text="End Time" VerticalAlignment="Top"/>
+        <TextBox x:Name="EndTime" HorizontalAlignment="Left" Height="23" Margin="406,159,0,0" TextWrapping="Wrap" Text="{Binding EndTime}" VerticalAlignment="Top" Width="120"/>
+        <DatePicker HorizontalAlignment="Left" Text="{Binding TimeCardDate, Mode=TwoWay}" Margin="425,5,0,0" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="339,9,0,0" TextWrapping="Wrap" Text="Time Card Date" VerticalAlignment="Top"/>
+        <Button x:Name="UpdateTimeBlock" Content="Update TimeBlock" Command="{Binding UpdateTimeBlockCommand}" HorizontalAlignment="Left" Margin="300,392,0,0" VerticalAlignment="Top" Width="106"/>
+        <Button x:Name="CreateTimeBlock" Content="Create TimeBlock" Command="{Binding CreateTimeBlockCommand}" HorizontalAlignment="Left" Margin="422,422,0,0" VerticalAlignment="Top" Width="103"/>
+        <Button x:Name="ClearFields" Content="Clear Fields" Command="{Binding ClearFieldsCommand}" HorizontalAlignment="Left" Margin="447,392,0,0" VerticalAlignment="Top" Width="75"/>
+        <RadioButton x:Name="BreakTimeRB" GroupName="TimeType" Content="BreakTime" IsChecked="{Binding BreakType}" HorizontalAlignment="Left" Margin="428,48,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="WorkTimeRB" GroupName="TimeType" Content="WorkTime" IsChecked="{Binding WorkType}" HorizontalAlignment="Left" Margin="428,65,0,0" VerticalAlignment="Top"/>
+        <TextBlock  HorizontalAlignment="Left" Margin="421,199,0,0" TextWrapping="Wrap" Text="Hours" VerticalAlignment="Top"/>
+        <TextBlock x:Name="CalculatedHours" HorizontalAlignment="Left" Margin="461,199,0,0" TextWrapping="Wrap" Text="{Binding CalculatedHours}" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="207,345,0,0"  Text="{Binding TotalTaskTime}" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="103,365,0,0"  Text="Total Break Time:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="207,365,0,0"  Text="{Binding TotalBreakTime}" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="103,345,0,0"  Text="Total Task Time:" VerticalAlignment="Top"/>
     </Grid>
 </core:UserControlViewBase>
 

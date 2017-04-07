@@ -23,8 +23,8 @@ namespace ProjectWatch.ViewModel
 		public IContactRepository contactRepository;
 		//protected ObservableCollection<Company> companies;
 		//protected ObservableCollection<Contact> employees;
-		private ObservableCollection<Company> _companyMainCompanies;
-		private ObservableCollection<Contact> _companyMainEmployees;
+		private List<Company> _companyMainCompanies;
+		private List<Contact> _companyMainEmployees;
 		private ViewModelCommon _currentViewModel;
 		private CompanyViewModel _companyViewModel = null;
 
@@ -34,14 +34,14 @@ namespace ProjectWatch.ViewModel
 			//employees = new ObservableCollection<Contact>(contactRepository.Get().EntitySet);
 			EditCompanyCommand = new RelayCommand<Company>(OnEditCompany);
 			EditContactCommand = new RelayCommand<Contact>(OnEditContact);
-			AddCompanyCommand = new RelayCommand<string>(OnAddCompany);
+			AddCompanyCommand = new RelayCommand(OnAddCompany);
 			AddContactCommand = new RelayCommand<Company>(OnAddContact);
 			CompanyViewCommand = new RelayCommand(OnCompanyView);
 			_companyViewModel = new CompanyViewModel();
 			_currentViewModel = _companyViewModel;
 		}
 
-		public ObservableCollection<Company> CompanyMainCompanies
+		public List<Company> CompanyMainCompanies
 		{
 			get
 			{
@@ -54,10 +54,11 @@ namespace ProjectWatch.ViewModel
 			}
 		}
 
-		public ObservableCollection<Contact> CompanyMainEmployees
+		public List<Contact> CompanyMainEmployees
 		{
 			get { return _companyMainEmployees; }
-			set { Set(() => CompanyMainEmployees, ref _companyMainEmployees, value, false); }
+			//set { Set(() => CompanyMainEmployees, ref _companyMainEmployees, value, false); }
+			set { _companyMainEmployees= value; }
 		}
 
 		public RelayCommand CompanyViewCommand { get; set; }
@@ -82,17 +83,18 @@ namespace ProjectWatch.ViewModel
 
 		}
 
-		public RelayCommand<string> AddCompanyCommand { get; set; }
+		public RelayCommand AddCompanyCommand { get; set; }
 
-		void OnAddCompany(string companyName)
+		void OnAddCompany()
 		{
-			Company tempCompany = new Company(companyName);
-			tempCompany = companyRepository.Add(tempCompany);
-			CompanyMainCompanies = new ObservableCollection<Company>( companyRepository.Get().EntitySet);
+			CurrentViewModel = new CompanyEditViewModel();
+			//Company tempCompany = new Company(companyName);
+			//tempCompany = companyRepository.Add(tempCompany);
+			//CompanyMainCompanies = companyRepository.Get().EntitySet.ToList();
 			//List<Company> tempCompanies = _companyMainCompanies.ToList();
 			//tempCompanies.Add(tempCompany);
 			//_companyMainCompanies = new ObservableCollection<Company>(tempCompanies);
-			(CurrentViewModel as CompanyViewModel).CompanyToAdd = "";
+			//(CurrentViewModel as CompanyViewModel).CompanyToAdd = "";
 		}
 
 		public RelayCommand<Company> AddContactCommand { get; set; }
@@ -116,8 +118,8 @@ namespace ProjectWatch.ViewModel
 		{
 			companyRepository = ClientEntityBase.Container.GetExportedValue<ICompanyRepository>();
 			contactRepository = ClientEntityBase.Container.GetExportedValue<IContactRepository>();
-			CompanyMainCompanies = new ObservableCollection<Company>(companyRepository.Get().EntitySet);
-			CompanyMainEmployees = new ObservableCollection<Contact>(contactRepository.Get().EntitySet);
+			CompanyMainCompanies = companyRepository.Get().EntitySet.ToList();
+			CompanyMainEmployees = contactRepository.Get().EntitySet.ToList();
 		}
 	}
 }
