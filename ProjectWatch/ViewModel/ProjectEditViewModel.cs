@@ -1,30 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Core.Common.Core;
 using Core.Common.UI;
 using GalaSoft.MvvmLight.Command;
 using ProjectWatch.Contracts.RepositoryInterfaces;
-using ProjectWatch.Data.DataSets;
 using ProjectWatch.Entities;
 
 namespace ProjectWatch.ViewModel
 {
 	public class ProjectEditViewModel : ViewModelCommon
 	{
+		#region Fields
 		private List<Company> _companies = null;
 		private List<Contact> _contacts = null;
 		private List<Contact> _allContacts = null;
-		//private List<Phase> _phases = null;
 		private DashboardViewModel dashboardViewModel = null;
-		public ProjectEditViewModel() : this(new Project(-1))
-		{
-		}
-
 		private Project _projectUnderEdit = new Project();
 		private Contact _selectedProjectContact;
 		private string _projectName;
@@ -33,29 +23,35 @@ namespace ProjectWatch.ViewModel
 		private string _projectCostQuote;
 		private string _projectTimeQuote;
 		private Contact _selectedBillingContact;
-		private Contact _selectedManagementContact;
 		private bool _isBillable;
 		private string _rate;
 		private ICompanyRepository _companyRepo;
 		private IContactRepository _contactRepo;
-
+		#endregion
+		#region Constructors
+		public ProjectEditViewModel() : this(new Project(-1))
+		{
+		}
 		public ProjectEditViewModel(Project project)
 		{
 			_projectUnderEdit = project.Clone() as Project;
 			SaveCommand = new RelayCommand(OnSave, CanSave);
 		}
+		#endregion
 
+		#region Overrides
 		protected override void OnViewLoaded()
 		{
 			dashboardViewModel = ClientEntityBase.Container.GetExportedValue<DashboardViewModel>();
 			_companyRepo = ClientEntityBase.Container.GetExportedValue<ICompanyRepository>();
 			_companies = _companyRepo.Get().EntitySet.ToList();
-			//_phases = dashboardViewModel.Phases;
 			_contactRepo = ClientEntityBase.Container.GetExportedValue<IContactRepository>();
 			_allContacts = _contactRepo.Get().EntitySet.ToList();
 			FormInit();
 		}
+		#endregion
 
+		#region Methods
 		void FormInit()
 		{
 			_projectName = _projectUnderEdit.Name;
@@ -82,13 +78,10 @@ namespace ProjectWatch.ViewModel
 			_rate =( _projectUnderEdit.Rate > 0d && _projectUnderEdit.IsBillable) ? $"{ProjectUnderEdit.Rate:0.##}" : "0.0";
 			_projectUnderEdit.CleanAll();
 		}
-
 		bool CanSave()
 		{
 			return _projectUnderEdit.IsDirty && !string.IsNullOrEmpty(_projectName);
 		}
-		public RelayCommand SaveCommand { get; set; }
-
 		public void OnSave()
 		{
 			if (_projectUnderEdit.ProjectId == -1)
@@ -102,9 +95,15 @@ namespace ProjectWatch.ViewModel
 			_projectUnderEdit.CleanAll();
 			dashboardViewModel.Projects = dashboardViewModel.projectRepository.Get().EntitySet.ToList();
 			SaveCommand.RaiseCanExecuteChanged();
-			//ProjectMainProjects = dashboardViewModel.Projects;
 		}
+		#endregion
 
+		#region Commands
+		public RelayCommand SaveCommand { get; set; }
+		#endregion
+
+
+		#region Properties
 		public string Rate
 		{
 			get { return _rate; }
@@ -126,7 +125,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
 		public Project ProjectUnderEdit
 		{
 			get { return _projectUnderEdit; }
@@ -139,7 +137,6 @@ namespace ProjectWatch.ViewModel
 				
 			}
 		}
-
 		public string ProjectName
 		{
 			get
@@ -154,7 +151,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
 		public string ProjectNote
 		{
 			get
@@ -183,19 +179,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
-		//public CompanySet CompanyEntitySet
-		//{
-		//	get { return _companyEntitySet; }
-		//	set
-		//	{
-		//		if (Set(() => CompanyEntitySet, ref _companyEntitySet, value, false))
-		//		{
-		//			Companies = _companyEntitySet.EntitySet.ToList();
-		//		}
-		//	}
-		//}
-
 		public List<Contact> Contacts
 		{
 			get { return _contacts; }
@@ -206,7 +189,6 @@ namespace ProjectWatch.ViewModel
 			get { return _companies; }
 			set { Set(() => Companies, ref _companies, value, false); }
 		}
-
 		public Company SelectedProjectCompany
 		{
 			get
@@ -231,7 +213,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
 		public bool IsBillable
 		{
 			get { return _isBillable; }
@@ -245,7 +226,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
 		public string ProjectCostQuote
 		{
 			get
@@ -282,20 +262,6 @@ namespace ProjectWatch.ViewModel
 				SaveCommand.RaiseCanExecuteChanged();
 			}
 		}
-
-		//public Contact SelectedManagementContact
-		//{
-		//	get { return _selectedManagementContact; }
-		//	set
-		//	{
-		//		if (Set(() => SelectedManagementContact, ref _selectedManagementContact, value, false))
-		//		{
-		//			_projectUnderEdit.MakeDirty();
-		//			_projectUnderEdit.ManagementContactId = _selectedManagementContact.ContactId;
-		//		}
-		//	}
-		//}
-
 		public string ProjectTimeQuote
 		{
 			get
@@ -323,5 +289,9 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
+		#endregion
+
+
+
 	}
 }

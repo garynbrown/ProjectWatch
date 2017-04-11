@@ -27,87 +27,27 @@ namespace ProjectWatch.Entities
         {
             CompanyName = CName;
 	        CompanyId = -1;
-	        //_employees = new List<Contact>();
-	        //if (DataUtils.LCust != null)
-	        //{
-	        //    foreach (Customer cust in DataUtils.LCust)
-	        //    {
-	        //        if (cust.Company == CompanyName)
-	        //        {
-	        //            if (LEmployees == null) LEmployees = new List<Customer>();
-	        //            LEmployees.Add(cust);
-	        //        }
-	        //    }
-	        //}
         }
 		public static Company CreateCompany(global::System.Int32 companyId)
 		{
 			Company company = new Company();
-			company._companyId = companyId;
+			company.CompanyId = companyId;
 			return company;
 		}
 		#endregion
 
+
 		#region Properties
-		public int CompanyId
-		{
-			get { return _companyId; }
-			set
-			{
-				_companyId = value;
-			}
-		}
-		private int _companyId;
-	    public string CompanyName
-	    {
-		    get { return _companyName; }
-		    set { _companyName = value; }
-	    }
-		private string _companyName;
-	    private string _note;
-	    public string Note
-	    {
-		    get { return _note; }
-		    set { _note = value; }
-	    }
+		public int CompanyId { get; set; }
+
+	    public string CompanyName { get; set; }
+
+	    public string Note { get; set; }
 
 	    [JsonIgnore]
 	    public string PathName => "Company";
 		#endregion
 		
-		#region Fields
-		//private List<Contact> _employees;
-		#endregion
-        #region Methods
-   //     public Contact getEmployeebyID(int clntID)
-   //     {
-			//// todo change this to Linq or Lambda
-			//Contact retCust = new Contact();
-   //         foreach (Contact clnt in _employees)
-   //         {
-   //             if (clnt.ContactId == clntID)
-   //             {
-   //                 retCust = clnt;
-   //                 break;
-   //             }
-   //         }
-   //         return retCust;
-   //     }
-   //     public Contact getEmployeeByName(string First, string Last)
-   //     {
-			//// todo change this to Linq or Lambda
-			//Contact retClnt = new Contact();
-   //         foreach (Contact cust in _employees)
-   //         {
-   //             if ((cust.LastName == Last)&&(cust.FirstName == First))
-   //             {
-			//		retClnt = cust;
-   //                 break;
-   //             }
-   //          }
-   //         return retClnt;
-   //     }
-        #endregion
 
 		#region Contract_Implementations
 		[JsonIgnore]
@@ -117,21 +57,23 @@ namespace ProjectWatch.Entities
 			set { CompanyId = value; }
 		}
 
-
-	    #endregion
-
 	    public object Clone()
 	    {
 		    Company c = new Company();
-		    c.CompanyId = _companyId;
-		    c.CompanyName = _companyName;
-		    c.Note = _note;
+		    c.CompanyId = CompanyId;
+		    c.CompanyName = CompanyName;
+		    c.Note = Note;
 		    return c;
 	    }
 
+	    #endregion
+
+
+	    #region Overrides
 	    public override string ToString()
 	    {
-		    return _companyName;
+		    return CompanyName;
 	    }
+	    #endregion
     }
 }

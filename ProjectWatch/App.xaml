@@ -59,9 +59,6 @@
             <DataTemplate DataType="{x:Type viewModel:ProjectEditViewModel}">
                 <views:ProjectEditView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:PhaseViewModel}">
-                <views:PhaseView/>
-            </DataTemplate>
             <DataTemplate DataType="{x:Type viewModel:PhaseEditViewModel}">
                 <views:PhaseEditView/>
             </DataTemplate>

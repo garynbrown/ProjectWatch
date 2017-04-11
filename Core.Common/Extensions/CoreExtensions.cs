@@ -52,12 +52,6 @@ namespace Core.Common.Extensions
 			return propertyInfo.IsNavigable();
 		}
 
-		//public static bool IsNavigable<T>(this ClientEntityBase obj, Expression<Func<T>> propertyExpression)
-		//{
-		//	string propertyName = PropertySupport.ExtractPropertyName(propertyExpression);
-		//	PropertyInfo propertyInfo = obj.GetType().GetProperty(propertyName);
-		//	return propertyInfo.IsNavigable();
-		//}
 
 		static Dictionary<string, bool> BrowsableProperties = new Dictionary<string, bool>();
 		static Dictionary<string, PropertyInfo[]> BrowsablePropertyInfos = new Dictionary<string, PropertyInfo[]>();

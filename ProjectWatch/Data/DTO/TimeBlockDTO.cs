@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ProjectWatch.Entities;
 
 namespace ProjectWatch.Data.DTO
 {
 	public class TimeBlockDTO
 	{
-		private TimeBlock _timeBlock = null;
 		private string _startTime;
 		private string _endTime;
 		private string _timeType;
@@ -34,10 +30,7 @@ namespace ProjectWatch.Data.DTO
 
 		public string DtoPhase
 		{
-			get
-			{
-				return ( TBlock.PhaseId == -1) ? "":_phases.Find(p => p.PhaseId == TBlock.PhaseId).PhaseName;
-			}
+			get {return ( TBlock.PhaseId == -1) ? "":_phases.Find(p => p.PhaseId == TBlock.PhaseId).PhaseName;}
 		}
 
 		public string DtoProject
@@ -50,17 +43,10 @@ namespace ProjectWatch.Data.DTO
 			get
 			{
 				TimeSpan t = TBlock.EndTime - TBlock.StartTime;
-				//TimeSpan t = new TimeSpan(TBlock.EndTime.Hour - TBlock.StartTime.Hour,
-				//	TBlock.EndTime.Minute - TBlock.StartTime.Minute,
-				//	TBlock.EndTime.Second - TBlock.StartTime.Second);
 				return $"{t.Hours}.{(t.Minutes*10/6):D2}";
 			}
 		}
 
-		public TimeBlock TBlock
-		{
-			get { return _timeBlock; }
-			set { _timeBlock = value; }
-		}
+		public TimeBlock TBlock { get; set; } = null;
 	}
 }

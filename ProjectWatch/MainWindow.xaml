@@ -1,26 +1,9 @@
 ﻿<Window x:Class="ProjectWatch.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:v="clr-namespace:ProjectWatch.Views"
         xmlns:views="clr-namespace:ProjectWatch.Views"
         Title="ProjectWatch" Height="187" Width="214" WindowStyle="SingleBorderWindow" ResizeMode="CanMinimize">
-        <!--xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"-->
-    <!--<Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>-->
     <Grid>
-        <!--<v:MainView x:Name="main" Margin="10" />-->
-
         <views:DashboardView x:Name="Dashboard"  />
     </Grid>
 </Window>

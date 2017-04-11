@@ -19,19 +19,17 @@ namespace ProjectWatch.ViewModel
 	[PartCreationPolicy(CreationPolicy.Shared)]
 	public class CompanyMainViewModel : ViewModelCommon
 	{
+		#region Fields
 		public ICompanyRepository companyRepository;
 		public IContactRepository contactRepository;
-		//protected ObservableCollection<Company> companies;
-		//protected ObservableCollection<Contact> employees;
 		private List<Company> _companyMainCompanies;
-		private List<Contact> _companyMainEmployees;
 		private ViewModelCommon _currentViewModel;
 		private CompanyViewModel _companyViewModel = null;
+		#endregion
 
+		#region Constructors
 		public CompanyMainViewModel()
 		{
-			//companies = new ObservableCollection<Company>( companyRepository.Get().EntitySet);
-			//employees = new ObservableCollection<Contact>(contactRepository.Get().EntitySet);
 			EditCompanyCommand = new RelayCommand<Company>(OnEditCompany);
 			EditContactCommand = new RelayCommand<Contact>(OnEditContact);
 			AddCompanyCommand = new RelayCommand(OnAddCompany);
@@ -40,7 +38,9 @@ namespace ProjectWatch.ViewModel
 			_companyViewModel = new CompanyViewModel();
 			_currentViewModel = _companyViewModel;
 		}
+		#endregion
 
+		#region Properties
 		public List<Company> CompanyMainCompanies
 		{
 			get
@@ -54,20 +54,41 @@ namespace ProjectWatch.ViewModel
 			}
 		}
 
-		public List<Contact> CompanyMainEmployees
+		public List<Contact> CompanyMainEmployees { get; set; }
+
+		public ViewModelCommon CurrentViewModel
 		{
-			get { return _companyMainEmployees; }
-			//set { Set(() => CompanyMainEmployees, ref _companyMainEmployees, value, false); }
-			set { _companyMainEmployees= value; }
+			get { return _currentViewModel; }
+			set {Set(() => CurrentViewModel, ref _currentViewModel,value,false); }
+		}
+		#endregion
+
+		#region Commands
+
+		public RelayCommand AddCompanyCommand { get; set; }
+
+		public RelayCommand<Company> AddContactCommand { get; set; }
+		public RelayCommand CompanyViewCommand { get; set; }
+		public RelayCommand<Company> EditCompanyCommand { get; set; }
+
+		public RelayCommand<Contact> EditContactCommand { get; set; }
+		#endregion
+
+		#region Methods
+
+		void OnAddCompany()
+		{
+			CurrentViewModel = new CompanyEditViewModel();
 		}
 
-		public RelayCommand CompanyViewCommand { get; set; }
-
+		void OnAddContact( Company company)
+		{
+			CurrentViewModel = new ContactEditViewModel(company);
+		}
 		void OnCompanyView()
 		{
 			CurrentViewModel = new CompanyViewModel();
 		}
-		public RelayCommand<Company> EditCompanyCommand { get; set; }
 
 		public void OnEditCompany(Company company)
 		{
@@ -75,44 +96,14 @@ namespace ProjectWatch.ViewModel
 
 		}
 
-		public RelayCommand<Contact> EditContactCommand { get; set; }
-
 		void OnEditContact(Contact contact)
 		{
 			CurrentViewModel = new ContactEditViewModel(contact);
 
 		}
+		#endregion
 
-		public RelayCommand AddCompanyCommand { get; set; }
-
-		void OnAddCompany()
-		{
-			CurrentViewModel = new CompanyEditViewModel();
-			//Company tempCompany = new Company(companyName);
-			//tempCompany = companyRepository.Add(tempCompany);
-			//CompanyMainCompanies = companyRepository.Get().EntitySet.ToList();
-			//List<Company> tempCompanies = _companyMainCompanies.ToList();
-			//tempCompanies.Add(tempCompany);
-			//_companyMainCompanies = new ObservableCollection<Company>(tempCompanies);
-			//(CurrentViewModel as CompanyViewModel).CompanyToAdd = "";
-		}
-
-		public RelayCommand<Company> AddContactCommand { get; set; }
-
-		void OnAddContact( Company company)
-		{
-			CurrentViewModel = new ContactEditViewModel(company);
-		}
-		public ViewModelCommon CurrentViewModel
-		{
-			get { return _currentViewModel; }
-			set {Set(() => CurrentViewModel, ref _currentViewModel,value,false); }
-		}
-
-		public override string ViewTitle
-		{
-			get { return "Company"; }
-		}
+		#region Overrides
 
 		protected override void OnViewLoaded()
 		{
@@ -121,5 +112,10 @@ namespace ProjectWatch.ViewModel
 			CompanyMainCompanies = companyRepository.Get().EntitySet.ToList();
 			CompanyMainEmployees = contactRepository.Get().EntitySet.ToList();
 		}
+		public override string ViewTitle
+		{
+			get { return "Company"; }
+		}
+		#endregion
 	}
 }

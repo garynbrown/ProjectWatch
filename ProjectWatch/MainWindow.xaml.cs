@@ -24,11 +24,13 @@ namespace ProjectWatch
 	/// </summary>
 	public partial class MainWindow 
 	{
+		#region Constructors
 		public MainWindow()
 		{
 			InitializeComponent();
 			//			main.DataContext = ClientEntityBase.Container.GetExportedValue<MainViewModel>();
-						Dashboard.DataContext = ClientEntityBase.Container.GetExportedValue<DashboardViewModel>();
+			Dashboard.DataContext = ClientEntityBase.Container.GetExportedValue<DashboardViewModel>();
 		}
+		#endregion
 	}
 }

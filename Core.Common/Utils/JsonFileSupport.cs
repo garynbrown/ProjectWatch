@@ -1,8 +1,5 @@
 ﻿using System;
-
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Common.Core;
@@ -53,13 +50,12 @@ namespace Core.Common.Utils
 					string dir = Path.GetDirectoryName(location);
 					Directory.CreateDirectory(dir);
 				}
-				StringBuilder sb = new StringBuilder(jsonContent);
-				using (StreamWriter writer = new StreamWriter(location))
+				var sb = new StringBuilder(jsonContent);
+				using (var writer = new StreamWriter(location))
 				{
 
 					 writer.Write(jsonContent);
 				}
-				//File.WriteAllText(location, jsonContent);
 			}
 			catch (Exception ex)
 			{
@@ -86,7 +82,6 @@ namespace Core.Common.Utils
 
 					await writer.WriteAsync(jsonContent);
 				}
-				//File.WriteAllText(location, jsonContent);
 			}
 			catch (Exception ex)
 			{
@@ -109,9 +104,7 @@ namespace Core.Common.Utils
 			{
 				using (StreamReader reader = File.OpenText(location))
 				{
-					//retValue = reader.ReadToEnd();
 					  retValue = await reader.ReadToEndAsync();
-					//retValue = await Task.Run(() => reader.ReadToEnd());
 				}
 			}
 			catch (Exception ex)
@@ -132,24 +125,12 @@ namespace Core.Common.Utils
 
 			try
 			{
-				//StringReader reader = new StringReader(location);
-				//Task<string> taskstring = reader.ReadToEndAsync();
 				retValue = File.ReadAllText(location);
 			}
 			catch (Exception ex)
 			{
 				return string.Empty;
 			}
-			//JsonSerializer Jserializer = new JsonSerializer();
-			//Jserializer.Formatting = Formatting.Indented;
-
-			//using (StreamWriter writer = new StreamWriter(filePath))
-			//{
-			//	using (JsonWriter Jwriter = new JsonTextWriter(writer))
-			//	{
-			//		Jserializer.Serialize(Jwriter, PSettings);
-			//	}
-			//}
 			return retValue;
 
 		}

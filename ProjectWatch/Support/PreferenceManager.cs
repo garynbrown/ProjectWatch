@@ -35,46 +35,6 @@ namespace ProjectWatch.Support
 			{
 				_configString = reader.ReadToEnd();
 				PSettings = JsonConvert.DeserializeObject<PreferenceSettings>(_configString);
-#if OldCode
-//JsonTextReader JReader = new JsonTextReader( new StringReader(ConfigString));
-//while (JReader.Read())
-//{
-//	if (JReader.Value != null)
-//	{
-//		if (JReader.TokenType.ToString() == "PropertyName")
-//		{
-//			switch (JReader.Value.ToString())
-//			{
-//				case ("ProVersion"):
-//				{
-//					JReader.Read();
-//					ProVersion = (bool) JReader.Value;
-//						break;
-//				}
-//				case ("LastProject"):
-//				{
-//					JReader.Read();
-//					LastProject = (int)JReader.Value;
-//					break;
-//				}
-//				case ("LastPhase"):
-//					{
-//						JReader.Read();
-//						LastPhase = (int)JReader.Value;
-//						break;
-//					}
-//				case ("LastBillingDate"):
-//					{
-//						JReader.Read();
-//						LastBillingDate = (DateTime)JReader.Value;
-//						break;
-//					}
-
-//			}
-//		}
-//	}
-//}
-#endif
 			}
 		}
 

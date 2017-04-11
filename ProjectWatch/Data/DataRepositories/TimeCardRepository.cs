@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Core.Common.Contracts;
 using Core.Common.Core;
 using Core.Common.Data;
 using Core.Common.Utils;
 using Newtonsoft.Json;
 using ProjectWatch.Contracts.RepositoryInterfaces;
-using ProjectWatch.Data.DataSets;
 using ProjectWatch.Entities;
 
 namespace ProjectWatch.Data.DataRepositories

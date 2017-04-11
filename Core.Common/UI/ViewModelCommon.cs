@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Core.Common.Core;
 using FluentValidation;
 using FluentValidation.Results;
 using GalaSoft.MvvmLight;
-using ValidationResult = System.Windows.Controls.ValidationResult;
 
 namespace Core.Common.UI
 {
@@ -35,14 +33,10 @@ namespace Core.Common.UI
 			codeToExecute.Invoke(proxy);
 
 			IDisposable disposableClient = proxy as IDisposable;
-			if (disposableClient != null)
-				disposableClient.Dispose();
+			disposableClient?.Dispose();
 		}
 
-		public virtual string ViewTitle
-		{
-			get { return String.Empty; }
-		}
+		public virtual string ViewTitle => String.Empty;
 
 		List<ClientEntityBase> _Models;
 
@@ -62,8 +56,7 @@ namespace Core.Common.UI
 			{
 				foreach (ClientEntityBase modelObject in _Models)
 				{
-					if (modelObject != null)
-						modelObject.Validate();
+					modelObject?.Validate();
 
 					_ValidationErrors = _ValidationErrors.Union(modelObject.ValidationErrors).ToList();
 				}
@@ -76,10 +69,7 @@ namespace Core.Common.UI
 
 		public DelegateCommand<object> ToggleErrorsCommand { get; protected set; }
 
-		public virtual bool ValidationHeaderVisible
-		{
-			get { return ValidationErrors != null && ValidationErrors.Count() > 0; }
-		}
+		public virtual bool ValidationHeaderVisible => ValidationErrors != null && ValidationErrors.Any();
 
 		public virtual bool ErrorsVisible
 		{
@@ -150,7 +140,7 @@ namespace Core.Common.UI
 		{
 			get
 			{
-				if (_ValidationErrors != null && _ValidationErrors.Count() > 0)
+				if (_ValidationErrors != null && _ValidationErrors.Any())
 					return false;
 				else
 					return true;
@@ -171,7 +161,7 @@ namespace Core.Common.UI
 			{
 				StringBuilder errors = new StringBuilder();
 
-				if (_ValidationErrors != null && _ValidationErrors.Count() > 0)
+				if (_ValidationErrors != null && _ValidationErrors.Any())
 				{
 					foreach (ValidationFailure validationError in _ValidationErrors)
 					{

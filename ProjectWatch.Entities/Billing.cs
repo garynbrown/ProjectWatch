@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
 using System.Runtime.Serialization;
 using Core.Common.Core;
-using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Core.Common.Contracts;
 
@@ -26,7 +20,7 @@ namespace ProjectWatch.Entities
 		public static Billing CreateBilling(int billing_ID, int project_ID)
 		{
 			Billing billing = new Billing();
-			billing._billingId = billing_ID;
+			billing.BillingId = billing_ID;
 			billing.ProjectId = project_ID;
 			return billing;
 		}
@@ -36,127 +30,29 @@ namespace ProjectWatch.Entities
 		}
 		public Billing(int billingId, int projectId)
 		{
-			_billingId = billingId;
+			BillingId = billingId;
 		}
 		#endregion
 
 		#region Primitive Properties
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		//[EdmScalarPropertyAttribute(EntityKeyProperty = true, IsNullable = false)]
 		[DataMember]
-		public int BillingId
-		{
-			get
-			{
-				return _billingId;
-			}
-			set
-			{
-				if (_billingId != value)
-				{
-					_billingId = value;
-					RaisePropertyChanged(() => BillingId);
-				}
-			}
-		}
-		private int _billingId;
+		public int BillingId { get; set; }
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		//[EdmScalarPropertyAttribute(EntityKeyProperty = false, IsNullable = false)]
 		[DataMember]
-		public int ProjectId
-		{
-			get
-			{
-				return _projectId;
-			}
-			set
-			{
-				_projectId = value;
-				RaisePropertyChanged(() => _projectId);
-			}
-		}
-		private int _projectId;
+		public int ProjectId { get; set; }
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		//[EdmScalarPropertyAttribute(EntityKeyProperty = false, IsNullable = true)]
 		[DataMember]
-		public int PhaseId
-		{
-			get
-			{
-				return _phaseId;
-			}
-			set
-			{
-				_phaseId = value;
-				RaisePropertyChanged(() => _phaseId);
-			}
-		}
-		private int _phaseId;
+		public int PhaseId { get; set; }
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		//[EdmScalarPropertyAttribute(EntityKeyProperty = false, IsNullable = true)]
 		[DataMember]
-		public DateTime DateBilled
-		{
-			get
-			{
-				return _dateBilled;
-			}
-			set
-			{
-				_dateBilled = value;
-				RaisePropertyChanged(() => _dateBilled);
-			}
-		}
-		private DateTime _dateBilled;
+		public DateTime DateBilled { get; set; }
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		//[EdmScalarPropertyAttribute(EntityKeyProperty = false, IsNullable = true)]
 		[DataMember]
-		public double AmountBilled
-		{
-			get
-			{
-				return _amountBilled;
-			}
-			set
-			{
-				_amountBilled = value;
-				RaisePropertyChanged(() => _amountBilled);
-			}
-		}
-		private double _amountBilled;
+		public double AmountBilled { get; set; }
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
 		[DataMember]
-		public double Hours_Billed
-		{
-			get
-			{
-				return _hoursBilled;
-			}
-			set
-			{
-				_hoursBilled = value;
-				RaisePropertyChanged(() => _hoursBilled);
-			}
-		}
-		private double _hoursBilled;
+		public double Hours_Billed { get; set; }
 
 		[DataMember]
 		public string FileLocation { get; set; }
@@ -169,22 +65,8 @@ namespace ProjectWatch.Entities
 
 		[DataMember]
 		public DateTime ToDate { get; set; }
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
 		[DataMember]
-		public string Note
-		{
-			get
-			{
-				return _note;
-			}
-			set
-			{
-				_note = value;
-				RaisePropertyChanged(() => _note);
-			}
-		}
+		public string Note { get; set; }
 
 		[JsonIgnore]
 		public override int EntityId
@@ -203,11 +85,9 @@ namespace ProjectWatch.Entities
 		[JsonIgnore]
 		public string PathName  => "Billing";
 
-
-		private string _note;
-
 		#endregion
 
+		#region Contract_Implementations
 		public object Clone()
 		{
 			Billing b = new Billing();
@@ -227,5 +107,6 @@ namespace ProjectWatch.Entities
 
 			return b;
 		}
+		#endregion
 	}
 }

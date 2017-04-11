@@ -13,20 +13,21 @@ namespace ProjectWatch.ViewModel
 {
 	public class PhaseEditViewModel : ViewModelCommon
 	{
+		#region Fields
 		private Phase _phaseUnderEdit;
 		private DashboardViewModel dashboardViewModel = null;
 		private string _dueDate;
 		private string _hourQuote;
 		private string _note;
-		private int _phaseId;
 		private string _phaseName;
 		private string _projectName;
 		private string _rate;
 		private string _timeQuote;
 		private bool _billable;
-		private Contact _billingContact;
-		private Contact _managementContact;
 
+		#endregion
+
+		#region Constructors
 		private PhaseEditViewModel()
 		{
 		}
@@ -35,12 +36,6 @@ namespace ProjectWatch.ViewModel
 			: this(new Phase(project.ProjectId,-1))
 		{		
 		}
-		public Phase PhaseUnderEdit
-		{
-			get { return _phaseUnderEdit; }
-			set { _phaseUnderEdit = value; }
-		}
-
 
 		public PhaseEditViewModel( Phase phase)
 		{
@@ -49,56 +44,13 @@ namespace ProjectWatch.ViewModel
 			dashboardViewModel = ClientEntityBase.Container.GetExportedValue<DashboardViewModel>();
 			SaveCommand = new RelayCommand(OnSave, CanSave);
 		}
-
-
-		bool CanSave()
+		#endregion
+		#region Properties
+		public Phase PhaseUnderEdit
 		{
-			return _phaseUnderEdit.IsDirty && !string.IsNullOrEmpty(_phaseName);
+			get { return _phaseUnderEdit; }
+			set { _phaseUnderEdit = value; }
 		}
-		public RelayCommand SaveCommand { get; set; }
-
-		void OnSave()
-		{
-			if (PhaseUnderEdit.PhaseId == -1)
-			{
-				dashboardViewModel.phaseRepository.Add(PhaseUnderEdit);
-			}
-			else
-			{
-				dashboardViewModel.phaseRepository.Update(PhaseUnderEdit);
-			}
-			int indx = dashboardViewModel.Projects.FindIndex(p => p.ProjectId == _phaseUnderEdit.ProjectId);
-			if (indx > -1)
-			{
-				Project projectToEdit = indx > -1 ? dashboardViewModel.Projects[indx] : null;
-				if (projectToEdit != null)
-				{
-					projectToEdit.HasChild = true;
-				}
-				dashboardViewModel.projectRepository.Update(projectToEdit);
-			}
-			_phaseUnderEdit.CleanAll();
-			SaveCommand.RaiseCanExecuteChanged();
-			dashboardViewModel.AllPhases = dashboardViewModel.phaseRepository.Get().EntitySet.ToList();
-		}
-
-		public bool Billable
-		{
-			get
-			{
-				return _billable;
-			}
-			set
-			{
-				if (Set(() => Billable, ref _billable, value, false))
-				{
-					PhaseUnderEdit.MakeDirty();
-					PhaseUnderEdit.IsBillable = _billable;
-					SaveCommand.RaiseCanExecuteChanged();
-				}
-			}
-		}
-
 		public string DueDate
 		{
 			get
@@ -170,11 +122,7 @@ namespace ProjectWatch.ViewModel
 			}
 		}
 
-		public int PhaseId
-		{
-			get { return _phaseId; }
-			set { _phaseId = value; }
-		}
+		public int PhaseId { get; set; }
 
 		public string PhaseName
 		{
@@ -258,22 +206,61 @@ namespace ProjectWatch.ViewModel
 
 			}
 		}
+		public Contact BillingContact { get; set; }
 
-		public Contact BillingContact
+		public Contact ManagementContact { get; set; }
+		#endregion
+
+
+		#region Methods
+		bool CanSave()
 		{
-			get { return _billingContact; }
-			set { _billingContact = value; }
+			return _phaseUnderEdit.IsDirty && !string.IsNullOrEmpty(_phaseName);
+		}
+		void OnSave()
+		{
+			if (PhaseUnderEdit.PhaseId == -1)
+			{
+				dashboardViewModel.phaseRepository.Add(PhaseUnderEdit);
+			}
+			else
+			{
+				dashboardViewModel.phaseRepository.Update(PhaseUnderEdit);
+			}
+			int indx = dashboardViewModel.Projects.FindIndex(p => p.ProjectId == _phaseUnderEdit.ProjectId);
+			if (indx > -1)
+			{
+				Project projectToEdit = indx > -1 ? dashboardViewModel.Projects[indx] : null;
+				if (projectToEdit != null)
+				{
+					projectToEdit.HasChild = true;
+				}
+				dashboardViewModel.projectRepository.Update(projectToEdit);
+			}
+			_phaseUnderEdit.CleanAll();
+			SaveCommand.RaiseCanExecuteChanged();
+			dashboardViewModel.AllPhases = dashboardViewModel.phaseRepository.Get().EntitySet.ToList();
+		}
+		public bool Billable
+		{
+			get
+			{
+				return _billable;
+			}
+			set
+			{
+				if (Set(() => Billable, ref _billable, value, false))
+				{
+					PhaseUnderEdit.MakeDirty();
+					PhaseUnderEdit.IsBillable = _billable;
+					SaveCommand.RaiseCanExecuteChanged();
+				}
+			}
 		}
 
-		public Contact ManagementContact
-		{
-			get { return _managementContact; }
-			set { _managementContact = value; }
-		}
-
-		protected override void OnViewLoaded()
-		{
-			base.OnViewLoaded();
-		}
+		#endregion
+		#region Commands
+		public RelayCommand SaveCommand { get; set; }
+		#endregion
 	}
 }

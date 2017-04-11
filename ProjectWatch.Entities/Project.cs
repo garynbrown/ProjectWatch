@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
 using System.Runtime.Serialization;
 using Core.Common.Contracts;
 using Core.Common.Core;
@@ -12,16 +7,11 @@ using Newtonsoft.Json;
 
 namespace ProjectWatch.Entities
 {
-	[DataContract]
 	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public class Project : ClientEntityBase, IIdentifiableEntity, ICloneable
 	{
 		#region Factory Method
 
-		/// <summary>
-		/// Create a new Project object.
-		/// </summary>
-		/// <param name="project_ID">Initial value of the Project_ID property.</param>
 		public static Project CreateProject(global::System.Int32 projectId)
 		{
 			Project project = new Project();
@@ -45,70 +35,25 @@ namespace ProjectWatch.Entities
 
 		#region Primitive Properties
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		[DataMember]
 		public int ProjectId { get; set; }
 
-		//public int LastPhaseId { get; set; }
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		//[DataMember]
-		//public int ContactId
-		//{
-		//	get
-		//	{
-		//		return _clientId;
-		//	}
-		//	set
-		//	{
-		//		_clientId = value;
-		//		RaisePropertyChanged(() => _clientId);
-		//	}
-		//}
-		//private int _clientId;
-
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		[DataMember]
 		public string Name { get; set; }
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		[DataMember]
 		public double TimeQuote { get; set; }
 
-		[DataMember]
 		public bool IsBillable { get; set; }
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		[DataMember]
 		public double CostQuote { get; set; }
 
-		/// <summary>
-		/// No Metadata Documentation available.
-		/// </summary>
-		[DataMember]
 		public string Note { get; set; }
 
-		[DataMember]
 		public DateTime StartDate { get; set; }
 
-		[DataMember]
 		public DateTime EndDate { get; set; }
 
-		[DataMember]
 		public int BillingContactId { get; set; }
 
-		[DataMember]
 		public int ManagementContactId { get; set; }
 
-		[DataMember]
 		public int CompnayId { get; set; }
 
 		public bool HasChild { get; set; }

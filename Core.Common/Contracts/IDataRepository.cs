@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Core.Common.Core;
 using Core.Common.Data;
 
@@ -20,9 +16,6 @@ namespace Core.Common.Contracts
 
 		void RemoveAsync(T entity);
 		void Remove(T entity);
-
-		//void RemoveAsync(int id);
-		//void Remove(int id);
 
 		Task<T> UpdateAsync(T entity);
 		T Update(T entity);

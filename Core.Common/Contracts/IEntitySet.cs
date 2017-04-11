@@ -1,10 +1,5 @@
-﻿using System;
-using  Core.Common.Core;
+﻿using  Core.Common.Core;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core.Common.Data;
 
 namespace Core.Common.Contracts
 {

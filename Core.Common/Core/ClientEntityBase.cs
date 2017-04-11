@@ -1,6 +1,5 @@
 ﻿using System;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +7,8 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.Results;
-using System.Threading.Tasks;
 using System.Collections;
 using Core.Common.Extensions;
-using System.Linq.Expressions;
-using Core.Common.Utils;
 using System.ComponentModel;
 using Core.Common.Contracts;
 using System.ComponentModel.Composition.Hosting;
@@ -20,8 +16,6 @@ using Newtonsoft.Json;
 
 namespace Core.Common.Core
 {
-	// this is taken from RentalCar -> Core.Common.Core.ObjectBase
-	// this is used as the base object for Model / entity/ object model classes
 	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public abstract class ClientEntityBase : ObservableObject , IExtensibleDataObject, IDataErrorInfo,IDirtyCapable,IIdentifiableEntity
 	{
@@ -171,30 +165,6 @@ namespace Core.Common.Core
 
 		#endregion
 
-		#region Property change notification
-
-		//protected override void OnPropertyChanged(string propertyName)
-		//{
-		//	OnPropertyChanged(propertyName, true);
-		//}
-
-		//protected void OnPropertyChanged<T>(Expression<Func<T>> propertyExpression, bool makeDirty)
-		//{
-		//	string propertyName = PropertySupport.ExtractPropertyName(propertyExpression);
-		//	OnPropertyChanged(propertyName, makeDirty);
-		//}
-
-		//protected void OnPropertyChanged(string propertyName, bool makeDirty)
-		//{
-		//	base.OnPropertyChanged(propertyName);
-
-		//	if (makeDirty)
-		//		IsDirty = true;
-
-		//	Validate();
-		//}
-
-		#endregion
 
 		#region Validation
 
@@ -226,7 +196,7 @@ namespace Core.Common.Core
 		{
 			get
 			{
-				if (_ValidationErrors != null && _ValidationErrors.Count() > 0)
+				if (_ValidationErrors != null && _ValidationErrors.Any())
 					return false;
 				else
 					return true;
@@ -273,6 +243,5 @@ namespace Core.Common.Core
 			set { _deleted = value; }
 		}
 
-		//public abstract string PathName { get;  } 
 	}
 }

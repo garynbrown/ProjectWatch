@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Core.Common.Core;
 using Core.Common.UI;
 using ProjectWatch.Contracts.RepositoryInterfaces;
-using ProjectWatch.Data.DataRepositories;
 using ProjectWatch.Data.DTO;
 using ProjectWatch.Entities;
 
@@ -18,26 +15,11 @@ namespace ProjectWatch.ViewModel
 	[PartCreationPolicy(CreationPolicy.NonShared)]
 	public class TimecardViewModel : ViewModelCommon
 	{
+		#region Fields
 		private TimeCardMainViewModel timecardMain = null;
 		List<Project> _projects = new List<Project>();
 		List<Phase> _phases = new List<Phase>();
 		List<Company> _companies = new List<Company>();
-		public TimecardViewModel()
-		{
-		}
-
-		public override string ViewTitle
-		{
-			get { return "Time Card Tools"; }
-		}
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TimecardViewModel"/> class.
-		/// </summary>
-		//public TimecardViewModel(TimeCard timeCard)
-		//{
-		//	_currentTimeCard = timeCard;
-		//}
-		// Fields...
 		private TimeCard _currentTimeCard;
 		private List<TimeCard> _timeCards;
 		private TimeCard _selectedTimeCard;
@@ -50,7 +32,33 @@ namespace ProjectWatch.ViewModel
 		private bool _customRange;
 		private string _fromDate;
 		private string _toDate;
+		#endregion
+		#region Constructors
+		public TimecardViewModel()
+		{
+		}
+		#endregion
 
+		#region Overrides
+
+
+
+		protected override void OnViewLoaded()
+		{
+			timecardMain = ClientEntityBase.Container.GetExportedValue<TimeCardMainViewModel>();
+			Projects = timecardMain.projectRepository.Get().EntitySet as List<Project>;
+			Phases = timecardMain.phaseRepository.Get().EntitySet as List<Phase>;
+			Companies = timecardMain.companyRepository.Get().EntitySet as List<Company>;
+			_timeCardRepository = ClientEntityBase.Container.GetExportedValue<ITimeCardRepository>();
+			Today = true;
+		}
+		public override string ViewTitle
+		{
+			get { return "Time Card Tools"; }
+		}
+		#endregion
+
+		#region Properties
 		public TimeCard CurrentTimeCard
 		{
 			get { return _currentTimeCard; }
@@ -59,7 +67,6 @@ namespace ProjectWatch.ViewModel
 				_currentTimeCard = value;
 			}
 		}
-
 		public ObservableCollection<TimeCardDTO> DisplayTimeCards
 		{
 			get { return _displayTimeCards; }
@@ -78,18 +85,6 @@ namespace ProjectWatch.ViewModel
 				//}
 			}
 		}
-
-		private void MakeDisplayDtos(List<TimeCard> timeCards )
-		{
-			List<TimeCardDTO> DTOs = new List<TimeCardDTO>();
-			foreach (TimeCard _timeCard in timeCards)
-			{
-				DTOs.Add(new TimeCardDTO(_timeCard, timecardMain.TimeCardMainProjects.ToList(),
-					timecardMain.TimeCardMainCompanies.ToList(), timecardMain.TimeCardMainPhases.ToList()));
-			}
-			DisplayTimeCards = new ObservableCollection<TimeCardDTO>(DTOs);
-		}
-
 		public TimeCard SelectedTimeCard
 		{
 			get { return _selectedTimeCard; }
@@ -188,7 +183,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-		// todo move the backing fields of the radio buttons to the timecardMainViewModel.  So that when the user returns from editing, the same set of time cards are in the list box
 		public bool CustomRange
 		{
 			get { return _customRange; }
@@ -224,23 +218,6 @@ namespace ProjectWatch.ViewModel
 			}
 		}
 
-		List<TimeCard> GetCustomRange()
-		{
-			_timeCards.Clear();
-			if (CustomRange && !string.IsNullOrEmpty(_fromDate) && !string.IsNullOrEmpty(_toDate))
-			{
-				DateTime _toDateTime;
-				DateTime _fromDateTime;
-				DateTime.TryParse(_fromDate, out _fromDateTime);
-				DateTime.TryParse(_toDate, out _toDateTime);
-				if (_toDateTime < _fromDateTime)
-					return _timeCards;
-				_timeCards.Clear();
-				_timeCards.AddRange(_timeCardRepository.GetRangeTimeCards(_fromDateTime, _toDateTime));
-			}
-			return _timeCards ;
-		}
-
 		public string ToDate
 		{
 			get { return _toDate; }
@@ -274,31 +251,44 @@ namespace ProjectWatch.ViewModel
 		public List<Phase> Phases
 		{
 			get { return _phases; }
-			set
-			{
-				if ( Set(() => Phases, ref _phases, value, false))
-				{ }
-			}
+			set { Set(() => Phases, ref _phases, value, false); }
 		}
 
 		public List<Company> Companies
 		{
 			get { return _companies; }
-			set
-			{
-				if (Set(() => Companies, ref _companies, value, false))
-				{ }
-			}
+			set { Set(() => Companies, ref _companies, value, false); }
 		}
+		#endregion
 
-		protected override void OnViewLoaded()
+
+		#region Methods
+		private void MakeDisplayDtos(List<TimeCard> timeCards )
 		{
-			timecardMain = ClientEntityBase.Container.GetExportedValue<TimeCardMainViewModel>();
-			Projects = timecardMain.projectRepository.Get().EntitySet as List<Project>;
-			Phases = timecardMain.phaseRepository.Get().EntitySet as List<Phase>;
-			Companies = timecardMain.companyRepository.Get().EntitySet as List<Company>;
-			_timeCardRepository = ClientEntityBase.Container.GetExportedValue<ITimeCardRepository>();
-			Today = true;
+			List<TimeCardDTO> DTOs = new List<TimeCardDTO>();
+			foreach (TimeCard _timeCard in timeCards)
+			{
+				DTOs.Add(new TimeCardDTO(_timeCard, timecardMain.TimeCardMainProjects.ToList(),
+					timecardMain.TimeCardMainCompanies.ToList(), timecardMain.TimeCardMainPhases.ToList()));
+			}
+			DisplayTimeCards = new ObservableCollection<TimeCardDTO>(DTOs);
 		}
+		List<TimeCard> GetCustomRange()
+		{
+			_timeCards.Clear();
+			if (CustomRange && !string.IsNullOrEmpty(_fromDate) && !string.IsNullOrEmpty(_toDate))
+			{
+				DateTime _toDateTime;
+				DateTime _fromDateTime;
+				DateTime.TryParse(_fromDate, out _fromDateTime);
+				DateTime.TryParse(_toDate, out _toDateTime);
+				if (_toDateTime < _fromDateTime)
+					return _timeCards;
+				_timeCards.Clear();
+				_timeCards.AddRange(_timeCardRepository.GetRangeTimeCards(_fromDateTime, _toDateTime));
+			}
+			return _timeCards ;
+		}
+		#endregion
 	}
 }

@@ -1,0 +1,78 @@
+﻿<core:UserControlViewBase x:Class="ProjectWatch.Views.BillingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjectWatch.Views"
+             xmlns:core="clr-namespace:Core.Common.UI;assembly=Core.Common"
+             mc:Ignorable="d" 
+        Height="470" Width="550" Background="#FF6894A2">
+    <Grid>
+        <Grid HorizontalAlignment="Left" Margin="269,63,0,0" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="43" SharedSizeGroup="Links"/>
+                    <ColumnDefinition Width="50" SharedSizeGroup="Date"/>
+                    <ColumnDefinition Width="60" SharedSizeGroup="Company"/>
+                    <ColumnDefinition Width="60" SharedSizeGroup="Project"/>
+                    <ColumnDefinition Width="40" SharedSizeGroup="Amount"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="1" Text="Date"/>
+                <TextBlock Grid.Column="2" Text="Company"/>
+                <TextBlock Grid.Column="3" Text="Project"/>
+                <TextBlock Grid.Column="4" Text="Amount"/>
+            </Grid>
+        <ListBox Grid.Row="1" x:Name="listBox" ItemsSource="{Binding DisplayBillings}"  HorizontalAlignment="Left" Height="362"  VerticalAlignment="Top" Width="271">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="43" SharedSizeGroup="Links"/>
+                                <ColumnDefinition Width="50" SharedSizeGroup="Date"/>
+                                <ColumnDefinition Width="60" SharedSizeGroup="Company"/>
+                                <ColumnDefinition Width="60" SharedSizeGroup="Project"/>
+                                <ColumnDefinition Width="40" SharedSizeGroup="Amount"/>
+                            </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <TextBlock>
+                                <Hyperlink Command="{Binding DataContext.EditBillingCommand, RelativeSource={RelativeSource AncestorType=local:BillingMainView}}" CommandParameter="{Binding}">
+                                    <TextBlock Text="View"/>
+                                </Hyperlink>
+                            </TextBlock>
+                            <TextBlock>
+                                <Hyperlink Command="{Binding DataContext.DeleteBillingCommand, RelativeSource={RelativeSource AncestorType=local:BillingView}}" CommandParameter="{Binding}">
+                                    <TextBlock Text="Del"/>
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                            <TextBlock Grid.Column="1" Text="{Binding DateBilledDto}"/>
+                            <TextBlock Grid.Column="2" Text="{Binding CompanyNameDto}"/>
+                            <TextBlock Grid.Column="3" Text="{Binding ProjectNameDto}"/>
+                            <TextBlock Grid.Column="4" Text="{Binding AmountBilledDto}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        </Grid>
+        <ComboBox x:Name="ByCompanyCombo" IsEnabled="{Binding ByCompany}" ItemsSource="{Binding Companies}" SelectedItem="{Binding SelectedCompany}" HorizontalAlignment="Left" Margin="35,289,0,0" VerticalAlignment="Top" Width="156"/>
+        <ComboBox x:Name="ByProjectCombo" IsEnabled="{Binding ByProject}" ItemsSource="{Binding Projects}" SelectedItem="{Binding SelectedProject}" HorizontalAlignment="Left" Margin="35,379,0,0" VerticalAlignment="Top" Width="156"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="86,261,0,0" TextWrapping="Wrap" Text="Company" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="86,351,0,0" TextWrapping="Wrap" Text="Project" VerticalAlignment="Top"/>
+        <Button x:Name="CreateBillButton" Content="Create Bill" Command="{Binding CreateBillingCommand}" HorizontalAlignment="Left" Margin="140,440,0,0" VerticalAlignment="Top" Width="85" RenderTransformOrigin="0.475,-0.12"/>
+        <RadioButton x:Name="CompanyScope" GroupName="BillScope" IsChecked="{Binding ByCompany}" Content="By Company" HorizontalAlignment="Left" Margin="61,187,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="ProjectScope" GroupName="BillScope" IsChecked="{Binding ByProject}" Content="By Project" HorizontalAlignment="Left" Margin="61,209,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="ShowPhaseDetail" Content="Show Phase Detail" IsChecked="{Binding PhaseDetail}" HorizontalAlignment="Left" Margin="61,154,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="FromLastBilling" GroupName="DateGroup" IsChecked="{Binding FromLastBilling}" Content="From Last Billing Date" HorizontalAlignment="Left" Margin="61,63,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="CustomDates" GroupName="DateGroup" IsChecked="{Binding CustomDateRange}" Content="Custom Range" HorizontalAlignment="Left" Margin="61,86,0,0" VerticalAlignment="Top"/>
+        <DatePicker HorizontalAlignment="Left" Text="{Binding FromDate, Mode=TwoWay}" Margin="130,108,0,0" VerticalAlignment="Top"/>
+        <DatePicker HorizontalAlignment="Left" Text="{Binding ToDate, Mode=TwoWay}" Margin="130,130,0,0" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="68,114,0,0" TextWrapping="Wrap" Text="From:" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="83,132,0,0" TextWrapping="Wrap" Text="To:" VerticalAlignment="Top"/>
+
+    </Grid>
+</core:UserControlViewBase>
+

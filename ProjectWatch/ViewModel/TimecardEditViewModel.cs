@@ -15,6 +15,7 @@ namespace ProjectWatch.ViewModel
 {
 	public class TimecardEditViewModel : ViewModelCommon
 	{
+		#region Fields
 		private TimeCardMainViewModel timecardMain = null;
 		private DashboardViewModel dashboardViewModel = null;
 		private TimeCard _timecardUnderEdit = new TimeCard();
@@ -40,8 +41,9 @@ namespace ProjectWatch.ViewModel
 		private bool isTimecardActive = false;
 		private string _totalBreakTime;
 		private string _totalTaskTime;
-		//private bool _dirtyTimeBlock;
+		#endregion
 
+		#region Constructors
 		public TimecardEditViewModel(TimeCard timecard)
 		{
 			_timecardUnderEdit = timecard.Clone() as TimeCard;
@@ -65,9 +67,29 @@ namespace ProjectWatch.ViewModel
 		{
 
 		}
+		#endregion
 
+		#region Commands
 		public RelayCommand<TimeBlockDTO> DeleteTimeBlockCommand { get; set; }
+		public RelayCommand SaveCommand { get; set; }
+		public RelayCommand UpdateTimeBlockCommand { get; set; }
+		public RelayCommand CreateTimeBlockCommand { get; set; }
+		public RelayCommand ClearFieldsCommand { get; set; }
+		#endregion
 
+		#region Methods
+
+		private void MakeDisplayDtos(List<TimeBlock> timeBlocks)
+		{
+			List<TimeBlockDTO> DTOs = new List<TimeBlockDTO>();
+			List<TimeBlock> sortedList =  timeBlocks.OrderBy(t => t.StartTime).ToList();
+			foreach (TimeBlock _timeBlock in sortedList)
+			{
+				DTOs.Add(new TimeBlockDTO(_timeBlock, timecardMain.TimeCardMainProjects.ToList(),
+					timecardMain.TimeCardMainPhases.ToList()));
+			}
+			DisplayTimeBlocks = new ObservableCollection<TimeBlockDTO>(DTOs);
+		}
 		void OnDeleteTimeBlock(TimeBlockDTO timeBlockDto)
 		{
 			_timecardUnderEdit.TimeBlocks.Remove(timeBlockDto.TBlock);
@@ -76,12 +98,8 @@ namespace ProjectWatch.ViewModel
 			SaveCommand.RaiseCanExecuteChanged();
 
 		}
-		public RelayCommand SaveCommand { get; set; }
-
 		public void OnSave()
 		{
-			//todo if old Id is not -1 then delete the old file
-			// todo if this is curretly active in dashbord, then stop first
 			if (_timecardUnderEdit.TimeId == -1)
 			{
 				dashboardViewModel.timeCardRepository.Add(_timecardUnderEdit);
@@ -96,15 +114,64 @@ namespace ProjectWatch.ViewModel
 			SaveCommand.RaiseCanExecuteChanged();
 
 		}
-
 		bool CanSave()
 		{
-			// todo check if dashboard is running, can't edit current time card
 			return _timecardUnderEdit.IsDirty && !isTimecardActive;
 		}
+		void OnUpdateTimeBlockCommand()
+		{
+			if (!_timeBlockUnderEdit.IsDirty)
+				return;
+			_timeBlockUnderEdit.TimeBlockType = (WorkType) ? TimeType.Task : TimeType.Break;
+			_timecardUnderEdit.TimeBlocks.Remove(_selectedTimeBlock.TBlock);
+			_timecardUnderEdit.TimeBlocks.Add(_timeBlockUnderEdit);
+			MakeDisplayDtos(_timecardUnderEdit.TimeBlocks);
+			_timeBlockUnderEdit.CleanAll();
+			_timecardUnderEdit.MakeDirty();
+			SaveCommand.RaiseCanExecuteChanged();
+			OnClearFields();
+		}
+		bool canUpdate()
+		{
+			return (_timeBlockUnderEdit != null && _timeBlockUnderEdit.IsDirty 
+				&& !inNewBlockMode && !string.IsNullOrEmpty(_startTime) && !string.IsNullOrEmpty(_endTime));
+		}
+		void OnCreateTimeBlock()
+		{
+			if (!_timeBlockUnderEdit.IsDirty)
+				return;
+			_timeBlockUnderEdit.TimeBlockType = (WorkType) ? TimeType.Task : TimeType.Break;
+			_timecardUnderEdit.TimeBlocks.Add(_timeBlockUnderEdit);
+			MakeDisplayDtos(_timecardUnderEdit.TimeBlocks);
+			_timeBlockUnderEdit.CleanAll();
+			_timecardUnderEdit.MakeDirty();
+			SaveCommand.RaiseCanExecuteChanged();
+			OnClearFields();
+		}
+		bool CanCreateTimeBlock()
+		{
+			return inNewBlockMode && _timeBlockUnderEdit != null && _timeBlockUnderEdit.IsDirty 
+				&& !string.IsNullOrEmpty(_startTime) && !string.IsNullOrEmpty(_endTime);
+		}
+		void OnClearFields()
+		{
+			_timeBlockUnderEdit = new TimeBlock();
+			WorkType = true;
+			StartTime = "";
+			EndTime = "";
+			SelectedCompany = null;
+			SelectedProject = null;
+			SelectedPhase = null;
+			SelectedTimeBlock = null;
 
-		public RelayCommand UpdateTimeBlockCommand { get; set; }
+			_timeBlockUnderEdit.CleanAll();
+			inNewBlockMode = true;
+			CreateTimeBlockCommand.RaiseCanExecuteChanged();
+			UpdateTimeBlockCommand.RaiseCanExecuteChanged();
+		}
+		#endregion
 
+		#region Properties
 		public string SaveButtonContent
 		{
 			get
@@ -123,85 +190,6 @@ namespace ProjectWatch.ViewModel
 				
 			}
 		}
-
-		void OnUpdateTimeBlockCommand()
-		{
-			if (!_timeBlockUnderEdit.IsDirty)
-				return;
-			_timeBlockUnderEdit.TimeBlockType = (WorkType) ? TimeType.Task : TimeType.Break;
-			_timecardUnderEdit.TimeBlocks.Remove(_selectedTimeBlock.TBlock);
-			_timecardUnderEdit.TimeBlocks.Add(_timeBlockUnderEdit);
-			MakeDisplayDtos(_timecardUnderEdit.TimeBlocks);
-			_timeBlockUnderEdit.CleanAll();
-			_timecardUnderEdit.MakeDirty();
-			//inNewBlockMode = false;
-			//CreateTimeBlockCommand.RaiseCanExecuteChanged();
-			//UpdateTimeBlockCommand.RaiseCanExecuteChanged();
-			SaveCommand.RaiseCanExecuteChanged();
-			OnClearFields();
-		}
-		bool canUpdate()
-		{
-			return (_timeBlockUnderEdit != null && _timeBlockUnderEdit.IsDirty 
-				&& !inNewBlockMode && !string.IsNullOrEmpty(_startTime) && !string.IsNullOrEmpty(_endTime));
-		}
-
-		public RelayCommand CreateTimeBlockCommand { get; set; }
-
-		void OnCreateTimeBlock()
-		{
-			if (!_timeBlockUnderEdit.IsDirty)
-				return;
-			_timeBlockUnderEdit.TimeBlockType = (WorkType) ? TimeType.Task : TimeType.Break;
-			_timecardUnderEdit.TimeBlocks.Add(_timeBlockUnderEdit);
-			MakeDisplayDtos(_timecardUnderEdit.TimeBlocks);
-			_timeBlockUnderEdit.CleanAll();
-			_timecardUnderEdit.MakeDirty();
-			//inNewBlockMode = false;
-			//CreateTimeBlockCommand.RaiseCanExecuteChanged();
-			//UpdateTimeBlockCommand.RaiseCanExecuteChanged();
-			SaveCommand.RaiseCanExecuteChanged();
-			OnClearFields();
-		}
-
-		bool CanCreateTimeBlock()
-		{
-			return inNewBlockMode && _timeBlockUnderEdit != null && _timeBlockUnderEdit.IsDirty 
-				&& !string.IsNullOrEmpty(_startTime) && !string.IsNullOrEmpty(_endTime);
-		}
-
-		public RelayCommand ClearFieldsCommand { get; set; }
-
-		void OnClearFields()
-		{
-			_timeBlockUnderEdit = new TimeBlock();
-			WorkType = true;
-			StartTime = "";
-			EndTime = "";
-			SelectedCompany = null;
-			SelectedProject = null;
-			SelectedPhase = null;
-			SelectedTimeBlock = null;
-
-			_timeBlockUnderEdit.CleanAll();
-			inNewBlockMode = true;
-			CreateTimeBlockCommand.RaiseCanExecuteChanged();
-			UpdateTimeBlockCommand.RaiseCanExecuteChanged();
-		}
-
-		//public bool DirtyTimeBlock
-		//{
-		//	get { return _dirtyTimeBlock; }
-		//	set
-		//	{
-		//		if (Set(() => DirtyTimeBlock, ref _dirtyTimeBlock, value, false))
-		//		{
-		//			UpdateTimeBlockCommand.RaiseCanExecuteChanged();
-		//			CreateTimeBlockCommand.RaiseCanExecuteChanged();
-		//		}
-		//	}
-		//}
-
 		public string TimeCardDate
 		{
 			get { return _timeCardDate; }
@@ -223,7 +211,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
 		public List<TimeBlock> TimeBlocks
 		{
 			get { return _timeBlocks; }
@@ -358,7 +345,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
 		public List<Phase> Phases
 		{
 			get
@@ -465,7 +451,6 @@ namespace ProjectWatch.ViewModel
 			}
 		}
 
-
 		public bool WorkType
 		{
 			get { return _workType; }
@@ -501,19 +486,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
-		private void MakeDisplayDtos(List<TimeBlock> timeBlocks)
-		{
-			List<TimeBlockDTO> DTOs = new List<TimeBlockDTO>();
-			List<TimeBlock> sortedList =  timeBlocks.OrderBy(t => t.StartTime).ToList();
-			foreach (TimeBlock _timeBlock in sortedList)
-			{
-				DTOs.Add(new TimeBlockDTO(_timeBlock, timecardMain.TimeCardMainProjects.ToList(),
-					timecardMain.TimeCardMainPhases.ToList()));
-			}
-			DisplayTimeBlocks = new ObservableCollection<TimeBlockDTO>(DTOs);
-		}
-
 		public ObservableCollection<TimeBlockDTO> DisplayTimeBlocks
 		{
 			get { return _displayTimeBlocks; }
@@ -539,7 +511,6 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
-
 		public string TotalBreakTime
 		{
 			get { return _totalBreakTime; }
@@ -551,7 +522,11 @@ namespace ProjectWatch.ViewModel
 			get { return _totalTaskTime; }
 			set {Set(() => TotalTaskTime, ref _totalTaskTime, value, false); }
 		}
+		#endregion
 
+
+
+		#region Overrides
 		protected override void OnViewLoaded()
 		{
 			timecardMain = ClientEntityBase.Container.GetExportedValue<TimeCardMainViewModel>();
@@ -562,10 +537,9 @@ namespace ProjectWatch.ViewModel
 			WorkType = true;
 			if (_timecardUnderEdit.TimeId != -1)
 			{
-				//TimeCardDate = _timecardUnderEdit.TimeCardDate();
-
 				MakeDisplayDtos(_timecardUnderEdit.TimeBlocks);
 			}
 		}
+		#endregion
 	}
 }

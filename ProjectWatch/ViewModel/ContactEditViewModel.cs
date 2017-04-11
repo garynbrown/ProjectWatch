@@ -13,6 +13,7 @@ namespace ProjectWatch.ViewModel
 {
 	public class ContactEditViewModel : ViewModelCommon
 	{
+		#region Fields
 		private string _note;
 		private string _zip;
 		private string _state;
@@ -27,7 +28,9 @@ namespace ProjectWatch.ViewModel
 		private string _firstName;
 		Contact _contactUnderEdit = new Contact();
 		private CompanyMainViewModel companyMainViewModel;
+		#endregion
 
+		#region Constructors
 		public ContactEditViewModel()
 		{
 			
@@ -41,60 +44,9 @@ namespace ProjectWatch.ViewModel
 		public ContactEditViewModel(Company company)  : this(new Contact( company.CompanyId,-1))
 		{
 		}
+		#endregion
 
-		public string FirstName
-		{
-			get
-			{
-				_firstName = string.IsNullOrEmpty(_firstName) ? _contactUnderEdit.FirstName : _firstName;
-				return _firstName;
-			}
-			set
-			{
-				if (Set(() => FirstName, ref _firstName, value, false))
-				{
-					_contactUnderEdit.MakeDirty();
-					_contactUnderEdit.FirstName = _firstName;
-					SaveCommand.RaiseCanExecuteChanged();
-				}
-			}
-		}
-
-		public string LastName
-		{
-			get
-			{
-				_lastName = string.IsNullOrEmpty(_lastName) ? _contactUnderEdit.LastName : _lastName;
-				return _lastName;
-			}
-			set
-			{
-				if (Set(() => LastName, ref _lastName, value, false))
-				{
-					_contactUnderEdit.MakeDirty();
-					_contactUnderEdit.LastName = _lastName;
-					SaveCommand.RaiseCanExecuteChanged();
-				}
-			}
-		}
-
-		public string Email
-		{
-			get
-			{
-				_email = string.IsNullOrEmpty(_email) ? _contactUnderEdit.Email : _email;
-				return _email;
-			}
-			set
-			{
-				if (Set(() => Email, ref _email, value, false))
-				{
-					_contactUnderEdit.MakeDirty();
-					_contactUnderEdit.Email = _email;
-					SaveCommand.RaiseCanExecuteChanged();
-				}
-			}
-		}
+		#region Properties
 
 		public string CompanyName
 		{
@@ -248,12 +200,65 @@ namespace ProjectWatch.ViewModel
 				}
 			}
 		}
+		public string Email
+		{
+			get
+			{
+				_email = string.IsNullOrEmpty(_email) ? _contactUnderEdit.Email : _email;
+				return _email;
+			}
+			set
+			{
+				if (Set(() => Email, ref _email, value, false))
+				{
+					_contactUnderEdit.MakeDirty();
+					_contactUnderEdit.Email = _email;
+					SaveCommand.RaiseCanExecuteChanged();
+				}
+			}
+		}
+		public string FirstName
+		{
+			get
+			{
+				_firstName = string.IsNullOrEmpty(_firstName) ? _contactUnderEdit.FirstName : _firstName;
+				return _firstName;
+			}
+			set
+			{
+				if (Set(() => FirstName, ref _firstName, value, false))
+				{
+					_contactUnderEdit.MakeDirty();
+					_contactUnderEdit.FirstName = _firstName;
+					SaveCommand.RaiseCanExecuteChanged();
+				}
+			}
+		}
 
+		public string LastName
+		{
+			get
+			{
+				_lastName = string.IsNullOrEmpty(_lastName) ? _contactUnderEdit.LastName : _lastName;
+				return _lastName;
+			}
+			set
+			{
+				if (Set(() => LastName, ref _lastName, value, false))
+				{
+					_contactUnderEdit.MakeDirty();
+					_contactUnderEdit.LastName = _lastName;
+					SaveCommand.RaiseCanExecuteChanged();
+				}
+			}
+		}
+		#endregion
+
+		#region Methods
 		bool CanSave()
 		{
 			return _contactUnderEdit.IsDirty  && (!string.IsNullOrEmpty(FirstName) || !string.IsNullOrEmpty(LastName));
 		}
-		public RelayCommand SaveCommand { get; set; }
 
 		void OnSave()
 		{
@@ -268,10 +273,16 @@ namespace ProjectWatch.ViewModel
 			companyMainViewModel.CompanyMainEmployees =companyMainViewModel.contactRepository.Get().EntitySet.ToList();
 			_contactUnderEdit.CleanAll();
 		}
+		#endregion
+		#region Commands
+		public RelayCommand SaveCommand { get; set; }
+		#endregion
 
+		#region Overrides
 		protected override void OnViewLoaded()
 		{
 			companyMainViewModel = ClientEntityBase.Container.GetExportedValue<CompanyMainViewModel>();
 		}
+		#endregion
 	}
 }

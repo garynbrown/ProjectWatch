@@ -18,15 +18,15 @@ namespace ProjectWatch.ViewModel
 	[PartCreationPolicy(CreationPolicy.Shared)]
 	public class TimeCardMainViewModel : ViewModelCommon
 	{
+		#region Fields
 		public ICompanyRepository companyRepository;
 		public IPhaseRepository phaseRepository;
 		public IProjectRepository projectRepository;
-		private ObservableCollection<Company> _timeCardMainCompanies;
-		private ObservableCollection<Project> _timeCardMainProjects;
-		private ObservableCollection<Phase> _timeCardMainPhases;
 		private ViewModelCommon _currentViewModel;
-		private TimecardViewModel _timeCardViewModel = null;
+		private TimecardViewModel _timeCardViewModel ;
+		#endregion
 
+		#region Constructors
 		public TimeCardMainViewModel()
 		{
 			
@@ -36,54 +36,24 @@ namespace ProjectWatch.ViewModel
 			AddTimeCardCommand = new RelayCommand(OnAddTimeCard);
 			TimecardViewCommand = new RelayCommand(OnTimecardView);
 		}
+		#endregion
 
+		#region Properties
 		public ViewModelCommon CurrentViewModel
 		{
 			get { return _currentViewModel; }
 			set {Set(() => CurrentViewModel, ref _currentViewModel, value, false); }
 		}
+		public ObservableCollection<Company> TimeCardMainCompanies { get; set; }
 
-		public override string ViewTitle
-		{
-			get { return "TimeCard"; }
-		}
+		public ObservableCollection<Project> TimeCardMainProjects { get; set; }
 
-		public ObservableCollection<Company> TimeCardMainCompanies
-		{
-			get { return _timeCardMainCompanies; }
-			set { _timeCardMainCompanies = value; }
-		}
+		public ObservableCollection<Phase> TimeCardMainPhases { get; set; }
+		#endregion
 
-		public ObservableCollection<Project> TimeCardMainProjects
-		{
-			get { return _timeCardMainProjects; }
-			set { _timeCardMainProjects = value; }
-		}
+		#region Overrides
 
-		public ObservableCollection<Phase> TimeCardMainPhases
-		{
-			get { return _timeCardMainPhases; }
-			set { _timeCardMainPhases = value; }
-		}
 
-		public RelayCommand TimecardViewCommand { get; set; }
-
-		void OnTimecardView()
-		{
-			CurrentViewModel = new TimecardViewModel();
-		}
-		public RelayCommand AddTimeCardCommand { get; set; }
-
-		void OnAddTimeCard()
-		{
-			CurrentViewModel = new TimecardEditViewModel();
-		}
-		public RelayCommand<TimeCardDTO> EditTimeCardCommand { get; set; }
-
-		void OnEditTimeCard(TimeCardDTO dto)
-		{
-			CurrentViewModel = new TimecardEditViewModel(dto.TCard);
-		}
 
 		protected override void OnViewLoaded()
 		{
@@ -94,5 +64,32 @@ namespace ProjectWatch.ViewModel
 			TimeCardMainProjects = new ObservableCollection<Project>(projectRepository.Get().EntitySet);
 			TimeCardMainPhases = new ObservableCollection<Phase>(phaseRepository.Get().EntitySet);
 		}
+		public override string ViewTitle
+		{
+			get { return "TimeCard"; }
+		}
+		#endregion
+
+
+		#region Commands
+		public RelayCommand TimecardViewCommand { get; set; }
+		public RelayCommand AddTimeCardCommand { get; set; }
+		public RelayCommand<TimeCardDTO> EditTimeCardCommand { get; set; }
+		#endregion
+
+		#region Methods
+		void OnTimecardView()
+		{
+			CurrentViewModel = new TimecardViewModel();
+		}
+		void OnAddTimeCard()
+		{
+			CurrentViewModel = new TimecardEditViewModel();
+		}
+		void OnEditTimeCard(TimeCardDTO dto)
+		{
+			CurrentViewModel = new TimecardEditViewModel(dto.TCard);
+		}
+		#endregion
 	}
 }

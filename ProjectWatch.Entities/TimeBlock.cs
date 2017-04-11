@@ -17,16 +17,8 @@ namespace ProjectWatch.Entities
 	[JsonObject(MemberSerialization = MemberSerialization.OptOut)]
 	public class TimeBlock: ClientEntityBase, ICloneable
 	{
-		private const int WorkBlockType = 1;
-		const int BreakBlockType = 0;
-		private int _phaseId;
-		private int _projectId;
-		private DateTime _endTime;
-		private DateTime _startTime;
-		private string _note;
-		private double _hoursOnTask;
-		private double _hoursOnBreak;
 
+		#region Factory
 		public static TimeBlock CreateWorkBlock(DateTime startTime, DateTime endTime, int projectId, int phaseId)
 		{
 			TimeBlock t = new TimeBlock(startTime, endTime);
@@ -47,9 +39,12 @@ namespace ProjectWatch.Entities
 			t.HoursOnTask = 0.0d;
 			return t;
 		}
+		#endregion
 
+		#region Methods
 		public TimeSpan GetTimeSpan()
 		{ return new TimeSpan(EndTime.Hour - StartTime.Hour, EndTime.Minute - StartTime.Minute, EndTime.Second - StartTime.Second); }
+		#endregion
 
 		#region Constructors
 		/// <summary>
@@ -76,65 +71,38 @@ namespace ProjectWatch.Entities
 		#endregion
 		#region Properties
 		[DataMember]
-		public DateTime EndTime
-		{
-			get { return _endTime; }
-			set { Set(() => EndTime, ref _endTime, value); }
-		}
+		public DateTime EndTime { get; set; }
 
-		public double HoursOnBreak
-		{
-			get { return _hoursOnBreak; }
-			set { _hoursOnBreak = value; }
-		}
+		public double HoursOnBreak { get; set; }
 
-		public double HoursOnTask
-		{
-			get { return _hoursOnTask; }
-			set { _hoursOnTask = value; }
-		}
+		public double HoursOnTask { get; set; }
 
 		public int BillingId { get; set; }
-		public string Note
-		{
-			get { return _note; }
-			set { _note = value; }
-		}
+		public string Note { get; set; }
+
 		[DataMember]
 		public bool IsBilled { get; set; }
 		[DataMember]
-		public int PhaseId
-		{
-			get { return _phaseId; }
-			set
-			{
-				_phaseId = value;
-			}
-		}
-		[DataMember]
-		public int ProjectId
-		{
-			get { return _projectId; }
-			set
-			{
-				_projectId = value;
-				
-			}
-		}
-		
+		public int PhaseId { get; set; }
 
 		[DataMember]
-		public DateTime StartTime
-		{
-			get { return _startTime; }
-			set
-			{ Set(() => StartTime, ref _startTime, value); }
-		}
+		public int ProjectId { get; set; }
+
+
+		[DataMember]
+		public DateTime StartTime { get; set; }
+
 		[DataMember]
 		public TimeType TimeBlockType { get; set; }
 		#endregion
 
 		#region Overrides
+
+		public override int EntityId
+		{
+			get { return  (int)StartTime.TimeOfDay.TotalSeconds; }
+			set {  }
+		}
 		public override string ToString()
 		{
 			string blockType = TimeBlockType == TimeType.Task ? "Work" : "Break";
@@ -142,6 +110,7 @@ namespace ProjectWatch.Entities
 		}
 		#endregion
 
+		#region Contract_Implementations
 		public object Clone()
 		{
 			TimeBlock t = new TimeBlock(StartTime, EndTime, TimeBlockType);
@@ -153,11 +122,6 @@ namespace ProjectWatch.Entities
 			t.IsBilled = IsBilled;
 			return t;
 		}
-
-		public override int EntityId
-		{
-			get { return  (int)StartTime.TimeOfDay.TotalSeconds; }
-			set {  }
-		}
+		#endregion
 	}
 }

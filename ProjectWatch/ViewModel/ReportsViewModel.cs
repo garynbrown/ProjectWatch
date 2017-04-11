@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.Composition;
 using Core.Common.UI;
 
 namespace ProjectWatch.ViewModel
@@ -12,9 +7,5 @@ namespace ProjectWatch.ViewModel
 	[PartCreationPolicy(CreationPolicy.NonShared)]
 	public class ReportsViewModel : ViewModelCommon
 	{
-		public override string ViewTitle
-		{
-			get { return "Reports"; }
-		}
 	}
 }

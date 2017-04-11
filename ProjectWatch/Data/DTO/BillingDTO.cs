@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ProjectWatch.Entities;
 
 namespace ProjectWatch.Data.DTO
@@ -10,18 +7,9 @@ namespace ProjectWatch.Data.DTO
 	public class BillingDTO
 	{
 		public Billing Bill;
-		private string _amountBilledDto;
 		private List<Company> _companies;
 		private List<Project> _projects;
 		private List<Phase> _phases;
-		private string _companyName;
-		private string _projectName;
-		private string _PhaseName;
-		private string _dateBilledDto;
-		private string _hoursBilledDto;
-		private string _companyNameDto;
-		private string _projectNameDto;
-		private string _phaseNameDto;
 
 
 		public BillingDTO(Billing billing, List<Company> companies, List<Project> projects, List<Phase> phases)
@@ -33,41 +21,17 @@ namespace ProjectWatch.Data.DTO
 			MakeDto();
 		}
 
-		public string AmountBilledDto
-		{
-			get { return _amountBilledDto; }
-			set { _amountBilledDto = value; }
-		}
+		public string AmountBilledDto { get; set; }
 
-		public string DateBilledDto
-		{
-			get { return _dateBilledDto; }
-			set { _dateBilledDto = value; }
-		}
+		public string DateBilledDto { get; set; }
 
-		public string HoursBilledDto
-		{
-			get { return _hoursBilledDto; }
-			set { _hoursBilledDto = value; }
-		}
+		public string HoursBilledDto { get; set; }
 
-		public string CompanyNameDto
-		{
-			get { return _companyNameDto; }
-			set { _companyNameDto = value; }
-		}
+		public string CompanyNameDto { get; set; }
 
-		public string ProjectNameDto
-		{
-			get { return _projectNameDto; }
-			set { _projectNameDto = value; }
-		}
+		public string ProjectNameDto { get; set; }
 
-		public string PhaseNameDto
-		{
-			get { return _phaseNameDto; }
-			set { _phaseNameDto = value; }
-		}
+		public string PhaseNameDto { get; set; }
 
 		void MakeDto()
 		{

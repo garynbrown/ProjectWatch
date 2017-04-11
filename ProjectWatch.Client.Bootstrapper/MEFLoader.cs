@@ -18,7 +18,6 @@ namespace ProjectWatch.Client.Bootstrapper
 		public static CompositionContainer Init(ICollection<ComposablePartCatalog> CatalogParts)
 		{
 			AggregateCatalog catalog = new AggregateCatalog();
-			//catalog.Catalogs.Add(new AssemblyCatalog(typeof(MainWindowViewModel).Assembly));
 
 			if (CatalogParts != null)
 			{
