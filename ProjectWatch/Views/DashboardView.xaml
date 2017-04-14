@@ -91,6 +91,7 @@
             </Image>
             <Button x:Name="PropertyButton"  HorizontalAlignment="Left" Margin="0,7.133,0,0" Command="{Binding ShowPropertiesCommand}" Style="{DynamicResource PropertyButton}" Width="25.8" d:LayoutOverrides="Height"/>
         </Grid>
+        <Button x:Name="button3" Content="Button" HorizontalAlignment="Right" Margin="0,9,10,0" Command="{Binding ShowHelpCommand}" VerticalAlignment="Top" Width="20" Style="{DynamicResource Question}" Height="31"/>
 
         <!--<TextBlock x:Name="TimeOnProject" HorizontalAlignment="Left" Margin="102,85,0,0" TextWrapping="Wrap" Text="{Binding HoursWorked, Converter={StaticResource ConvertToWorkHours}}" VerticalAlignment="Top" Height="25" Width="88"/>-->
     </Grid>

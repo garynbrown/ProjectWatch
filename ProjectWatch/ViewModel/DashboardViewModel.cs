@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Timers;
 using Core.Common.Core;
 using Core.Common.UI;
@@ -87,6 +90,7 @@ namespace ProjectWatch.ViewModel
 			StartCommand = new RelayCommand(OnStart, OnStartCanExecute);
 			StopCommand = new RelayCommand(OnStop, OnStopCanExecute);
 			PauseCommand = new RelayCommand(OnBreak, OnBreakCanExecute);
+			ShowHelpCommand = new RelayCommand(OnShowHelp);
 		}
 		#endregion
 
@@ -251,6 +255,11 @@ namespace ProjectWatch.ViewModel
 			PauseCommand.RaiseCanExecuteChanged();
 		}
 
+		void OnShowHelp()
+		{
+			AboutView about = new AboutView();
+			about.Show();
+		}
 		private bool OnBreakCanExecute()
 		{
 			return _timerState == State.Running;
@@ -359,19 +368,19 @@ namespace ProjectWatch.ViewModel
 			}
 			HoursWorked = $"{totalTime.Hours:D2}:{totalTime.Minutes:D2}:{totalTime.Seconds:D2}";
 		}
-		#endregion
-		#region Commands
+#endregion
+#region Commands
 
 		public RelayCommand PauseCommand { get; set; }
 		public RelayCommand ShowPropertiesCommand { get; set; }
-
+		public RelayCommand ShowHelpCommand { get; set; }
 
 		public RelayCommand StartCommand { get; private set; }
 
 		public RelayCommand StopCommand { get; private set; }
-		#endregion
+#endregion
 
-		#region Overrides
+#region Overrides
 
 		protected override void OnViewLoaded()
 		{
@@ -401,11 +410,11 @@ namespace ProjectWatch.ViewModel
 		{
 			get { return $"Dashboard"; }
 		}
-		#endregion
+#endregion
 
-		#region Events_Delegates
+#region Events_Delegates
 		public event EventHandler<TimeCardEventArgs> TimeCardCreated;
-		#endregion
+#endregion
 
 	}
 }

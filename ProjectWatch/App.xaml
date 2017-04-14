@@ -98,6 +98,9 @@
             <DataTemplate DataType="{x:Type viewModel:BillingEditViewModel}">
                 <views:BillingEditView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:AboutViewModel}">
+                <views:AboutView/>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

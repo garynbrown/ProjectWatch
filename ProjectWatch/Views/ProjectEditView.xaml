@@ -14,7 +14,7 @@
     <Grid >
         <TextBlock x:Name="ProjectNameTextBlock" HorizontalAlignment="Left" Margin="10,42,0,0" TextWrapping="Wrap" Text="Project Name" VerticalAlignment="Top"/>
         <TextBox x:Name="ProjectName" HorizontalAlignment="Left" Height="23" Margin="118,35,0,0" TextWrapping="Wrap"  Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
-        <TextBlock x:Name="Contact"  HorizontalAlignment="Left" Margin="74,244,0,0" TextWrapping="Wrap" Text="BillingView Contact" VerticalAlignment="Top"/>
+        <TextBlock x:Name="Contact"  HorizontalAlignment="Left" Margin="74,244,0,0" TextWrapping="Wrap" Text="Billing Contact" VerticalAlignment="Top"/>
         <ComboBox x:Name="Contacts" ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedBillingContact, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="29,265,0,0" VerticalAlignment="Top" Width="187"/>
         <TextBlock x:Name="ProjectDiscrptionTB" HorizontalAlignment="Left" Margin="9,79,0,0" TextWrapping="Wrap" Text="Project Discrption" VerticalAlignment="Top"/>
         <TextBox x:Name="ProjectDiscription" Text="{Binding ProjectNote, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="63" Margin="120,79,0,0" VerticalAlignment="Top" Width="202" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True"/>
